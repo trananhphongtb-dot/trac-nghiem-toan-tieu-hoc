@@ -460,12 +460,12 @@ private fun generateWordProblem(grade: Int, level: Difficulty, random: Random): 
 private fun generateFractionDecimal(grade: Int, level: Difficulty, random: Random): Question {
     val t = Topic.PHAN_SO_THAP_PHAN
     if (grade < 4) {
-        val even = (2..100 step 2).random(random)
+        val even = (2..100 step 2).toList().random(random)
         return if (random.nextBoolean()) {
             makeQuestion(grade, t, level, "Một nửa của $even là bao nhiêu?", (even / 2).toString(),
                 numberDistractors(even / 2, random), "Một nửa của $even là $even : 2 = ${even / 2}.", random)
         } else {
-            val mult4 = (4..100 step 4).random(random)
+            val mult4 = (4..100 step 4).toList().random(random)
             makeQuestion(grade, t, level, "Một phần tư của $mult4 là bao nhiêu?", (mult4 / 4).toString(),
                 numberDistractors(mult4 / 4, random), "Một phần tư của $mult4 là $mult4 : 4 = ${mult4 / 4}.", random)
         }
@@ -529,7 +529,7 @@ private fun generateFractionDecimal(grade: Int, level: Difficulty, random: Rando
                 "Trừ số thập phân: ${formatNumber(big)} - ${formatNumber(small)} = $diff.", random)
         }
         2 -> {
-            val p = (5..95 step 5).random(random); val base = listOf(100, 200, 500, 1000).random(random)
+            val p = (5..95 step 5).toList().random(random); val base = listOf(100, 200, 500, 1000).random(random)
             val v = base * p / 100
             makeQuestion(grade, t, level, "$p% của $base là bao nhiêu?", v.toString(),
                 listOf((v + p).toString(), (v - 5).toString(), (100 - p).toString()),
