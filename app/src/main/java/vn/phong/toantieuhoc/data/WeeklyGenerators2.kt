@@ -353,32 +353,74 @@ private fun generateOne(ctx: Ctx, form: String): Question? {
         "CHART" -> fChart(ctx); "PROB" -> fProb(ctx); "AVG" -> fAvg(ctx); "SUM_DIFF" -> fSumDiff(ctx)
         "MUL10" -> fMul10(ctx); "EXPR" -> fExpr(ctx); "ROMAN" -> fRoman(ctx); "ANGLE" -> fAngle(ctx)
         "SPEED" -> fSpeed(ctx); "TIME_ADD" -> fTimeAdd(ctx)
+        "HARD_HONEY" -> fHardHoney(ctx); "HARD_RICE" -> fHardRice(ctx)
+        "HARD_REVERSE_MORE" -> fHardReverseMore(ctx); "HARD_REVERSE_LESS" -> fHardReverseLess(ctx)
+        "HARD_CONV_MIXED" -> fHardConvMixed(ctx); "HARD_TABLE_SUM" -> fHardTableSum(ctx)
+        "HARD_PIE" -> fHardPie(ctx); "HARD_FINDX" -> fHardFindX(ctx)
+        "HARD_HIDDEN_RECT" -> fHardHiddenRect(ctx); "HARD_ANNULUS" -> fHardAnnulus(ctx)
+        "HARD_AVG_REVERSE" -> fHardAvgReverse(ctx); "HARD_WORK" -> fHardWork(ctx)
+        "HARD_CANO" -> fHardCano(ctx); "HARD_SUMDIFF_MIDDLE" -> fHardSumDiffMiddle(ctx)
+        "HARD_DEC_REMAINDER" -> fHardDecRemainder(ctx); "HARD_WORD2_REVERSE" -> fHardWord2Reverse(ctx)
+        "HARD_TIME_BACKWARD" -> fHardTimeBackward(ctx); "HARD_PERCENT_REVERSE" -> fHardPercentReverse(ctx)
+        "HARD_VOLUME_TANK" -> fHardVolumeTank(ctx); "HARD_TIME_CHAIN" -> fHardTimeChain(ctx)
         else -> null
     }
 }
 
 private fun newRandom(): Random = Random(System.nanoTime() xor System.currentTimeMillis())
 
-/** Sinh một bộ 40 câu cho một danh sách dạng. Mỗi lần gọi đều ra bộ mới. */
+/** Sinh một bộ 40 câu cho một danh sách dạng. Mỗi lần gọi đều ra bộ mới.
+ *  Dạng của tuần (hoặc phạm vi đề kỳ) chiếm phần đầu; 8 câu cuối luôn là
+ *  dạng khó/nâng cao phù hợp lớp (xem hardFormsForGrade), để độ khó tăng
+ *  dần trong đề như đề tuần thật. Phần đầu được xáo trộn, phần cuối giữ
+ *  nguyên ở cuối đề. Nếu dạng khó sinh thiếu (hiếm, do lọc trùng), phần
+ *  còn thiếu được bù bằng dạng tuần để vẫn đủ 40 câu. */
 private fun generateSet(grade: Int, week: Int, forms: List<String>, count: Int = 40): List<Question> {
     val random = newRandom()
     val ctx = Ctx(grade, week, random)
-    val out = mutableListOf<Question>()
     val seen = HashSet<String>()
+    fun valid(q: Question): Boolean {
+        if (q.text in seen) return false
+        if (q.options.size != 4 || q.options.distinct().size != 4) return false
+        if (q.correctAnswer.isBlank() || q.correctAnswer == "NaN" || q.options.any { it == "NaN" || it.isBlank() }) return false
+        return true
+    }
+    val hardCount = if (count >= 16) 8 else 0
+    val firstTarget = count - hardCount
+    val first = mutableListOf<Question>()
     var attempts = 0
     // Xoay vòng dạng theo thứ tự ngẫu nhiên để mỗi dạng đều xuất hiện, không dồn một dạng.
     val shuffledForms = forms.shuffled(random)
-    while (out.size < count && attempts < 20000) {
+    while (first.size < firstTarget && attempts < 20000) {
         attempts++
-        val form = shuffledForms[out.size % shuffledForms.size]
+        val form = shuffledForms[first.size % shuffledForms.size]
         val q = generateOne(ctx, form) ?: continue
-        if (q.text in seen) continue
-        if (q.options.size != 4 || q.options.distinct().size != 4) continue
-        if (q.correctAnswer.isBlank() || q.correctAnswer == "NaN" || q.options.any { it == "NaN" || it.isBlank() }) continue
+        if (!valid(q)) continue
         seen += q.text
-        out += q
+        first += q
     }
-    return out.shuffled(random)
+    val hard = mutableListOf<Question>()
+    attempts = 0
+    val shuffledHard = hardFormsForGrade(grade).shuffled(random)
+    while (hard.size < hardCount && attempts < 10000) {
+        attempts++
+        val form = shuffledHard[hard.size % shuffledHard.size]
+        val q = generateOne(ctx, form) ?: continue
+        if (!valid(q)) continue
+        seen += q.text
+        hard += q
+    }
+    // Bù đủ 40 câu bằng dạng tuần nếu dạng khó sinh thiếu.
+    attempts = 0
+    while (first.size + hard.size < count && attempts < 20000) {
+        attempts++
+        val form = shuffledForms[(first.size + hard.size) % shuffledForms.size]
+        val q = generateOne(ctx, form) ?: continue
+        if (!valid(q)) continue
+        seen += q.text
+        hard += q
+    }
+    return first.shuffled(random) + hard.shuffled(random)
 }
 
 fun generateWeeklySet(grade: Int, week: Int): List<Question> {
