@@ -15,7 +15,6 @@ import vn.phong.toantieuhoc.model.ExamKind
 import vn.phong.toantieuhoc.model.Question
 import vn.phong.toantieuhoc.model.QuizResult
 import vn.phong.toantieuhoc.model.WeekDef
-import vn.phong.toantieuhoc.ui.BgTheme
 import vn.phong.toantieuhoc.ui.HistoryScreen
 import vn.phong.toantieuhoc.ui.HomeScreen
 import vn.phong.toantieuhoc.ui.QuizScreen
@@ -41,7 +40,6 @@ class MainActivity : ComponentActivity() {
             MaterialTheme {
                 var screen by remember { mutableStateOf<Screen>(Screen.Home) }
                 var grade by remember { mutableStateOf(1) }
-                var theme by remember { mutableStateOf(BgTheme.BLUE) }
                 var quizTitle by remember { mutableStateOf("") }
                 var questions by remember { mutableStateOf<List<Question>>(emptyList()) }
                 var index by remember { mutableStateOf(0) }
@@ -88,14 +86,11 @@ class MainActivity : ComponentActivity() {
 
                 when (screen) {
                     Screen.Home -> HomeScreen(
-                        theme = theme,
-                        onTheme = { theme = it },
                         onGradeSelected = { grade = it; screen = Screen.Weeks },
                         onHistory = { historyLines = historyStore.load(); screen = Screen.History }
                     )
                     Screen.Weeks -> WeekScreen(
                         grade = grade,
-                        theme = theme,
                         onWeek = { startWeek(it) },
                         onExam = { startExam(it) },
                         onBack = { screen = Screen.Home }
@@ -105,7 +100,6 @@ class MainActivity : ComponentActivity() {
                         questions = questions,
                         index = index,
                         answers = answers,
-                        theme = theme,
                         onAnswer = { pick ->
                             if (answers.getOrNull(index) == null) {
                                 answers = answers.toMutableList().also { it[index] = pick }
@@ -121,7 +115,6 @@ class MainActivity : ComponentActivity() {
                             ResultScreen(
                                 result = r,
                                 questions = questions,
-                                theme = theme,
                                 onRetry = {
                                     // Làm đề mới: sinh lại từ đầu với cùng lựa chọn gần nhất.
                                     // Tiêu đề giữ nguyên, nhưng bộ câu hỏi là bộ mới hoàn toàn
@@ -142,7 +135,7 @@ class MainActivity : ComponentActivity() {
                             screen = Screen.Home
                         }
                     }
-                    Screen.History -> HistoryScreen(lines = historyLines, theme = theme, onBack = { screen = Screen.Home })
+                    Screen.History -> HistoryScreen(lines = historyLines, onBack = { screen = Screen.Home })
                 }
             }
         }
