@@ -36,24 +36,47 @@ app sinh ngẫu nhiên một bộ mới bằng `Random` gieo bằng thời gian 
   đây là ngân hàng luyện tập, không phải tờ đề tuần nguyên bản — điều này
   cũng được ghi trong báo cáo nghiên cứu.
 
-## Màn làm bài
+## Màn làm bài (bản làm lại, giao diện câu hỏi đẹp hơn)
 
-- Câu hỏi trong một ô (card), 4 đáp án ở dưới.
-- Nút Câu trước và Câu tiếp, sơ đồ 40 câu (bấm vào số để nhảy tới câu đó).
+- Trên đầu: tiêu đề đề + viên thuốc số câu/đã làm và đồng hồ + thanh tiến trình.
+- Ở giữa, vùng cuộn: KHUNG CÂU HỎI riêng — card trắng bo tròn lớn, huy hiệu
+  “Câu x/40”, câu hỏi chữ lớn, đậm, căn giữa; đã trả lời thì lời giải hiện
+  ngay dưới khung câu hỏi, rồi mới tới sơ đồ 40 câu (bấm vào số để nhảy câu).
+- Ở đáy, cố định không cuộn: KHUNG ĐÁP ÁN riêng — card trắng bo tròn chứa
+  4 nút đáp án lớn, chữ căn giữa, dễ bấm bằng ngón tay; đúng xanh, sai đỏ,
+  các nút khác mờ đi sau khi chọn. Dưới khung đáp án là hàng Câu trước /
+  Câu tiếp và nút Nộp bài.
 - Thanh tiến trình trên đầu theo số câu đã làm, kèm đồng hồ đếm ngược
   giới hạn 60 phút; hết giờ tự nộp bài.
 - Câu đã trả lời thì khóa, không trả lời lại được, hiện giải thích ngay.
 - Nộp bài ra điểm thang 10, sao, và xem lại câu sai kèm đáp án đúng + giải thích.
 - Lịch sử làm bài lưu trên máy bằng SharedPreferences, tối đa 50 lượt.
 
+## Nội dung khó theo đề tuần thật
+
+- Thêm `WeeklyGenerators3.kt` (không xóa generator cũ): 20 dạng khó mới,
+  ví dụ bài mật ong 3 bước lớp 3, gạo bán 1/2 rồi 5/8 phần còn lại lớp 5,
+  bẫy chữ ngược, đổi đơn vị ngay trong bài (cm/dm, kg/g, m²/cm²), đọc bảng
+  rồi tính tổng, đọc biểu đồ quạt thiếu % rồi tính số học sinh, tìm x nhiều
+  bước bằng tính ngược, hình ẩn (chiều rộng từ chu vi hình vuông, vành khăn),
+  trung bình ngược, tổng–hiệu có số ở giữa, số dư phép chia thập phân, bài
+  nâng cao cuối đề (ca nô xuôi/ngược rồi lá trôi, làm chung công việc).
+- 8 câu cuối của mỗi đề (tuần và đề kỳ) luôn là dạng khó phù hợp lớp:
+  lớp 1–2 chỉ dùng dạng 2 bước đơn giản và bẫy ngược nhẹ; lớp 3–5 dùng
+  đầy đủ dạng khó của lớp đó. 32 câu đầu vẫn là dạng của tuần/phạm vi đề kỳ.
+- Mỗi dạng đều có lời giải từng bước đúng số học và 4 đáp án phân biệt.
+
 ## Giao diện và icon
 
 - Icon app là vector tự vẽ (`app/src/main/res/drawable/ic_app.xml`: nền xanh,
   tam giác vàng, dấu cộng trắng, chấm cam), không dùng icon mặc định
   `ic_dialog_info` nữa.
-- Ảnh nền dọc là gradient + hình vẽ vector bằng Canvas trong app (3 chủ đề:
-  Xanh dương, Hồng cam, Xanh lá, chọn được ở trang chính), không tải ảnh
-  ngoài nên APK vẫn nhẹ.
+- Ảnh nền dọc CỐ ĐỊNH duy nhất cho toàn app: gradient xanh dương đậm trên
+  xuống nhạt dưới + vài hình tròn mờ vẽ bằng Canvas, không tải ảnh ngoài
+  nên APK vẫn nhẹ, không còn màn chọn nền ở trang chính.
+- Tất cả tiêu đề, mô tả, câu hỏi, đáp án, kết quả đều căn giữa.
+- Màn chọn tuần: thứ tự Học kỳ 1 (tuần 1–18), Học kỳ 2 (tuần 19–35), rồi
+  mới tới phần Đề kiểm tra ở dưới cùng, rồi nút Quay lại.
 
 ## Khung tuần đã dùng — và chỗ chưa chắc chắn
 
