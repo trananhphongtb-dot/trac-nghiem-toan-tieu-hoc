@@ -148,7 +148,7 @@ val realFormsPart1: List<FormDef> = listOf(
     },
     FormDef("N08", Topic.SO_PHEP_TINH, 1, 5) { grade, level, random ->
         val wantEven = random.nextBoolean()
-        val correct = if (wantEven) (2..98 step 2).random(random) else (3..99 step 2).random(random)
+        val correct = if (wantEven) (2..98 step 2).toList().random(random) else (3..99 step 2).toList().random(random)
         val distractors = if (wantEven) (3..99 step 2).shuffled(random).take(3) else (2..98 step 2).shuffled(random).take(3)
         makeQuestion(grade, Topic.SO_PHEP_TINH, level, if (wantEven) "Số nào là số chẵn?" else "Số nào là số lẻ?",
             correct.toString(), distractors.map { it.toString() },
@@ -160,7 +160,7 @@ val realFormsPart1: List<FormDef> = listOf(
             numberDistractors(a * 2, random), "Gấp đôi số $a là $a × 2 = ${a * 2}.", random)
     },
     FormDef("N10", Topic.SO_PHEP_TINH, 1, 5) { grade, level, random ->
-        val a = (2..50 step 2).random(random)
+        val a = (2..50 step 2).toList().random(random)
         makeQuestion(grade, Topic.SO_PHEP_TINH, level, "Một nửa của số $a là số nào?", (a / 2).toString(),
             numberDistractors(a / 2, random), "Một nửa của $a là $a : 2 = ${a / 2}.", random)
     },
@@ -285,7 +285,7 @@ val realFormsPart1: List<FormDef> = listOf(
             "Chu vi hình $name là $side × $sides = ${side * sides} cm.", random)
     },
     FormDef("G03", Topic.HINH_HOC, 5, 5) { grade, level, random ->
-        val base = (4..30 step 2).random(random); val height = (2..20).random(random)
+        val base = (4..30 step 2).toList().random(random); val height = (2..20).random(random)
         val area = base * height / 2
         makeQuestion(grade, Topic.HINH_HOC, level, "Hình tam giác có đáy ${base}cm, chiều cao ${height}cm. Diện tích là bao nhiêu?",
             "$area cm²", listOf("${base * height} cm²", "${area + base} cm²", "${base + height} cm²"),
@@ -381,7 +381,7 @@ val realFormsPart1: List<FormDef> = listOf(
             "Tổng tiền là $a × 10.000 + $b × 5.000 + $c × 1.000 = $total đồng.", random)
     },
     FormDef("M05", Topic.DO_LUONG, 2, 5) { grade, level, random ->
-        val price = (1000..40000 step 1000).random(random); val pay = ((price / 10000) + 1) * 10000
+        val price = (1000..40000 step 1000).toList().random(random); val pay = ((price / 10000) + 1) * 10000
         val change = pay - price
         makeQuestion(grade, Topic.DO_LUONG, level, "Mua một món hàng giá $price đồng, trả $pay đồng. Hỏi được trả lại bao nhiêu tiền?",
             "$change đồng", listOf("${change + 1000} đồng", "${change - 1000} đồng", "$price đồng"),
@@ -409,21 +409,21 @@ val realFormsPart1: List<FormDef> = listOf(
             "Cộng $k ngày vào ${weekdays[start]}, đếm vòng 7 ngày được ${weekdays[end]}.", random)
     },
     FormDef("M09", Topic.DO_LUONG, 1, 5) { grade, level, random ->
-        val aKg = (1..9).random(random); val bG = (100..9000 step 100).random(random)
+        val aKg = (1..9).random(random); val bG = (100..9000 step 100).toList().random(random)
         val heavier = if (aKg * 1000 > bG) "$aKg kg" else "$bG g"
         makeQuestion(grade, Topic.DO_LUONG, level, "Cái nào nặng hơn: $aKg kg hay $bG g?",
             heavier, listOf(if (heavier == "$aKg kg") "$bG g" else "$aKg kg", "Bằng nhau", "Không so sánh được"),
             "$aKg kg = ${aKg * 1000} g, so với $bG g thì $heavier nặng hơn.", random)
     },
     FormDef("M10", Topic.DO_LUONG, 1, 5) { grade, level, random ->
-        val a = (1..5).random(random); val b = (10..90 step 10).random(random); val c = (1..5).random(random); val d = (10..90 step 10).random(random)
+        val a = (1..5).random(random); val b = (10..90 step 10).toList().random(random); val c = (1..5).random(random); val d = (10..90 step 10).toList().random(random)
         val total = (a + c) * 100 + b + d
         makeQuestion(grade, Topic.DO_LUONG, level, "$a m $b cm + $c m $d cm = ? cm", "$total cm",
             listOf("${total + 10} cm", "${total - 10} cm", "${(a + c) * 100} cm"),
             "Đổi ra cm rồi cộng: ${a * 100 + b} + ${c * 100 + d} = $total cm.", random)
     },
     FormDef("M11", Topic.DO_LUONG, 1, 5) { grade, level, random ->
-        val a = (1..9).random(random); val b = (100..900 step 100).random(random)
+        val a = (1..9).random(random); val b = (100..900 step 100).toList().random(random)
         val total = a * 1000 + b
         makeQuestion(grade, Topic.DO_LUONG, level, "$a l + $b ml = ? ml", "$total ml",
             listOf("${total + 100} ml", "${a * 1000} ml", "$b ml"),
