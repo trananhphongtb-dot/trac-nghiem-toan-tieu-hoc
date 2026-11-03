@@ -19,7 +19,7 @@ data class QuizResult(
     val total: Int,
     val correct: Int,
     val wrongQuestions: List<Question>,
-    val chosenAnswers: List<Int>
+    val chosenAnswers: List<Int?>
 ) {
     val score10: Double get() = if (total == 0) 0.0 else correct * 10.0 / total
     val stars: Int
