@@ -32,7 +32,7 @@ val realFormsPart2: List<FormDef> = listOf(
             "$total : $perBox = ${total / perBox} dư ${total % perBox}, nên cần thêm 1 hộp, tổng $boxes hộp.", random)
     },
     FormDef("W03", Topic.LOI_VAN, 2, 5) { grade, level, random ->
-        val have = (50000..100000 step 10000).random(random); val price = (5000..20000 step 1000).random(random); val qty = (2..5).random(random)
+        val have = (50000..100000 step 10000).toList().random(random); val price = (5000..20000 step 1000).toList().random(random); val qty = (2..5).random(random)
         val cost = price * qty
         if (cost >= have) return@FormDef makeQuestion(grade, Topic.LOI_VAN, level, "Lan có $have đồng, mua 1 quyển vở giá $price đồng. Hỏi Lan còn lại bao nhiêu tiền?",
             "${have - price} đồng", listOf("${have - price + 1000} đồng", "$price đồng", "$have đồng"),
@@ -78,7 +78,7 @@ val realFormsPart2: List<FormDef> = listOf(
         }
     },
     FormDef("W08", Topic.LOI_VAN, 5, 5) { grade, level, random ->
-        val price = (10000..100000 step 10000).random(random); val p = listOf(10, 20, 25, 50).random(random)
+        val price = (10000..100000 step 10000).toList().random(random); val p = listOf(10, 20, 25, 50).random(random)
         val discount = price * p / 100; val after = price - discount
         makeQuestion(grade, Topic.LOI_VAN, level, "Một món hàng giá $price đồng, được giảm giá $p%. Hỏi sau khi giảm, món hàng còn bao nhiêu tiền?",
             "$after đồng", listOf("${after + 1000} đồng", "$discount đồng", "$price đồng"),
@@ -195,7 +195,7 @@ val realFormsPart2: List<FormDef> = listOf(
             "Nhân số thập phân với số tự nhiên: ${formatNumber(a)} × $c = $v.", random)
     },
     FormDef("F11", Topic.PHAN_SO_THAP_PHAN, 5, 5) { grade, level, random ->
-        val price = (10000..100000 step 10000).random(random); val p = listOf(10, 20, 25, 50).random(random)
+        val price = (10000..100000 step 10000).toList().random(random); val p = listOf(10, 20, 25, 50).random(random)
         val after = price * (100 + p) / 100
         makeQuestion(grade, Topic.PHAN_SO_THAP_PHAN, level, "Một món hàng giá $price đồng, tăng giá $p%. Hỏi sau khi tăng, món hàng có giá bao nhiêu?",
             "$after đồng", listOf("${after + 1000} đồng", "$price đồng", "${price * p / 100} đồng"),
