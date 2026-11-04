@@ -32,6 +32,38 @@ data class QuizResult(
         }
 }
 
+/** Một câu sai đã lưu trong lịch sử. chosenIndex = -1 nghĩa là chưa chọn đáp án
+ *  ở lượt đó. Dùng cho màn xem lại câu sai, cả ở kết quả vừa làm và ở lịch sử. */
+data class WrongQuestion(
+    val text: String,
+    val options: List<String>,
+    val correctIndex: Int,
+    val chosenIndex: Int,
+    val explanation: String,
+    val form: String
+) {
+    val correctAnswer: String get() = options.getOrNull(correctIndex) ?: "?"
+    val chosenAnswer: String get() = options.getOrNull(chosenIndex) ?: "Chưa chọn"
+}
+
+/** Một lần làm bài trong lịch sử. week != null là đề tuần, ngược lại examTitle
+ *  là tên đề kỳ. Danh sách câu sai được lưu cùng entry để xem lại về sau. */
+data class HistoryEntry(
+    val id: Long,
+    val grade: Int,
+    val week: Int?,
+    val examTitle: String?,
+    val correct: Int,
+    val total: Int,
+    val wrong: List<WrongQuestion>
+) {
+    /** Nhãn phạm vi: "Tuần 8" cho đề tuần, tên đề cho đề kỳ. */
+    val scopeLabel: String get() = if (week != null) "Tuần $week" else (examTitle ?: "Đề kiểm tra")
+    /** Dòng ngắn gọn duy nhất của entry, số Lần do màn lịch sử tính thêm. */
+    fun shortLine(attemptNumber: Int): String =
+        "Lần $attemptNumber: Lớp $grade - $scopeLabel - $correct/$total câu đúng"
+}
+
 /** Một tuần học. [estimated] = true khi báo cáo nghiên cứu ghi tuần đó là
  *  ước tính theo giai đoạn (dấu ~), không phải tuần chính xác trong PPCT.
  */
