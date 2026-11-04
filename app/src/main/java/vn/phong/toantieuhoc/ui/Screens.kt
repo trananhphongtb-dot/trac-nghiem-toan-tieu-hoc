@@ -320,7 +320,7 @@ fun QuizScreen(
                         }
                     }
                 }
-                Text("Sơ đồ 40 câu (bấm vào số để nhảy tới câu đó):", fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = Color.White, textAlign = TextAlign.Center)
+                Text("Sơ đồ ${questions.size} câu (bấm vào số để nhảy tới câu đó):", fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = Color.White, textAlign = TextAlign.Center)
                 FlowRow(horizontalArrangement = Arrangement.Center, verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     questions.indices.forEach { i ->
                         val bg = when {
