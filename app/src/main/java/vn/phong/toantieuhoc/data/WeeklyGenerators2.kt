@@ -363,6 +363,12 @@ private fun generateOne(ctx: Ctx, form: String): Question? {
         "HARD_DEC_REMAINDER" -> fHardDecRemainder(ctx); "HARD_WORD2_REVERSE" -> fHardWord2Reverse(ctx)
         "HARD_TIME_BACKWARD" -> fHardTimeBackward(ctx); "HARD_PERCENT_REVERSE" -> fHardPercentReverse(ctx)
         "HARD_VOLUME_TANK" -> fHardVolumeTank(ctx); "HARD_TIME_CHAIN" -> fHardTimeChain(ctx)
+        "COMP_LIST_MAX" -> fCompListMax(ctx); "COMP_LIST_MIN" -> fCompListMin(ctx)
+        "EVENODD_LIST" -> fEvenOddList(ctx); "PLACE_TENS_UNITS" -> fPlaceTensUnits(ctx)
+        "GROUP_COUNT" -> fGroupCount(ctx); "EXPR_BIGGEST" -> fExprBiggest(ctx)
+        "MONEY_CHANGE" -> fMoneyChange(ctx); "UNIT_CONV_SIMPLE" -> fUnitConvSimple(ctx)
+        "WORD_GROUP" -> fWordGroup(ctx); "PLACE_DIGIT_VALUE" -> fPlaceDigitValue(ctx)
+        "ADD_SUB_CHAIN" -> fAddSubChain(ctx); "TRIPLE_PART" -> fTriplePart(ctx)
         else -> null
     }
 }
@@ -372,53 +378,75 @@ private fun newRandom(): Random = Random(System.nanoTime() xor System.currentTim
 /** Sinh một bộ 40 câu cho một danh sách dạng. Mỗi lần gọi đều ra bộ mới.
  *  Dạng của tuần (hoặc phạm vi đề kỳ) chiếm phần đầu; 8 câu cuối luôn là
  *  dạng khó/nâng cao phù hợp lớp (xem hardFormsForGrade), để độ khó tăng
- *  dần trong đề như đề tuần thật. Phần đầu được xáo trộn, phần cuối giữ
- *  nguyên ở cuối đề. Nếu dạng khó sinh thiếu (hiếm, do lọc trùng), phần
- *  còn thiếu được bù bằng dạng tuần để vẫn đủ 40 câu. */
+ *  dần trong đề như đề tuần thật.
+ *
+ *  Hai lỗi cũ đã sửa ở đây (lớp 1-4 trước đây thiếu câu vì chúng):
+ *  - Vòng lặp cũ chọn dạng theo số câu đã sinh được (first.size / hard.size),
+ *    nên khi một dạng đã cạn (ví dụ dạng có câu hỏi cố định) thì số câu
+ *    không tăng, lần thử sau lại chọn đúng dạng đó, lặp hết 20000 lần rồi
+ *    trả về thiếu câu, các dạng còn lại không bao giờ được thử. Nay chọn
+ *    dạng theo số lần thử (attempts), dạng cạn không chặn được dạng khác.
+ *  - Khóa trùng cũ chỉ là nội dung câu hỏi (q.text). Các dạng COMP_MAX,
+ *    COMP_MIN, EVEN_ODD, DEC_CMP có câu hỏi cố định, không chứa số, nên
+ *    mỗi dạng chỉ ra được đúng 1 câu trong cả đề. Nay khóa trùng là
+ *    text + đáp án đã sắp xếp, nên cùng một câu hỏi nhưng bộ đáp án khác
+ *    nhau vẫn được tính là câu khác nhau.
+ *  - Vòng bù cuối dùng các dạng số học vô hạn (ADD/SUB, lớp lớn thêm
+ *    MUL/DIV) để bảo đảm không bao giờ trả về dưới count câu. */
 private fun generateSet(grade: Int, week: Int, forms: List<String>, count: Int = 40): List<Question> {
     val random = newRandom()
     val ctx = Ctx(grade, week, random)
+    val safeForms = if (forms.isEmpty()) listOf("ADD", "SUB") else forms
     val seen = HashSet<String>()
+    fun key(q: Question): String = q.text + "|" + q.options.sorted().joinToString(",")
     fun valid(q: Question): Boolean {
-        if (q.text in seen) return false
+        if (key(q) in seen) return false
         if (q.options.size != 4 || q.options.distinct().size != 4) return false
         if (q.correctAnswer.isBlank() || q.correctAnswer == "NaN" || q.options.any { it == "NaN" || it.isBlank() }) return false
+        return true
+    }
+    fun accept(q: Question?, out: MutableList<Question>): Boolean {
+        if (q == null || !valid(q)) return false
+        seen += key(q)
+        out += q
         return true
     }
     val hardCount = if (count >= 16) 8 else 0
     val firstTarget = count - hardCount
     val first = mutableListOf<Question>()
     var attempts = 0
-    // Xoay vòng dạng theo thứ tự ngẫu nhiên để mỗi dạng đều xuất hiện, không dồn một dạng.
-    val shuffledForms = forms.shuffled(random)
+    // Xoay vòng dạng theo số lần thử, không theo số câu đã sinh được,
+    // để một dạng cạn không kẹt cả vòng lặp.
+    val shuffledForms = safeForms.shuffled(random)
     while (first.size < firstTarget && attempts < 20000) {
         attempts++
-        val form = shuffledForms[first.size % shuffledForms.size]
-        val q = generateOne(ctx, form) ?: continue
-        if (!valid(q)) continue
-        seen += q.text
-        first += q
+        val form = shuffledForms[(attempts - 1) % shuffledForms.size]
+        accept(generateOne(ctx, form), first)
     }
     val hard = mutableListOf<Question>()
     attempts = 0
     val shuffledHard = hardFormsForGrade(grade).shuffled(random)
     while (hard.size < hardCount && attempts < 10000) {
         attempts++
-        val form = shuffledHard[hard.size % shuffledHard.size]
-        val q = generateOne(ctx, form) ?: continue
-        if (!valid(q)) continue
-        seen += q.text
-        hard += q
+        val form = shuffledHard[(attempts - 1) % shuffledHard.size]
+        accept(generateOne(ctx, form), hard)
     }
-    // Bù đủ 40 câu bằng dạng tuần nếu dạng khó sinh thiếu.
+    // Bù đủ bằng dạng tuần nếu dạng khó sinh thiếu.
     attempts = 0
     while (first.size + hard.size < count && attempts < 20000) {
         attempts++
-        val form = shuffledForms[(first.size + hard.size) % shuffledForms.size]
-        val q = generateOne(ctx, form) ?: continue
-        if (!valid(q)) continue
-        seen += q.text
-        hard += q
+        val form = shuffledForms[(attempts - 1) % shuffledForms.size]
+        accept(generateOne(ctx, form), hard)
+    }
+    // Bù cuối bằng mọi giá: các dạng số học vô hạn, số ngẫu nhiên theo lớp.
+    // ADD/SUB có đủ biến thể cho lớp 1 (phạm vi cộng trong 100 trở lên);
+    // lớp 3-4 thêm MUL/DIV để không cạn.
+    val fallbackForms = if (grade >= 3) listOf("ADD", "SUB", "MUL", "DIV") else listOf("ADD", "SUB")
+    attempts = 0
+    while (first.size + hard.size < count && attempts < 100000) {
+        attempts++
+        val form = fallbackForms[(attempts - 1) % fallbackForms.size]
+        accept(generateOne(ctx, form), hard)
     }
     return first.shuffled(random) + hard.shuffled(random)
 }
