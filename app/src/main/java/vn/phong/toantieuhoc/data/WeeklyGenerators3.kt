@@ -379,6 +379,277 @@ internal fun fHardTimeChain(ctx: Ctx): Question? {
     )
 }
 
+// ---------- Dạng mới cho lớp 1-4 (bổ sung 2026-11-04) ----------
+// Quy tắc chung: mọi dạng đều đưa tham số (số) vào trong câu hỏi, nên
+// không bị cạn như các dạng câu hỏi cố định (COMP_MAX, EVEN_ODD...).
+// Tất cả dùng mk() ở WeeklyGenerators.kt, không dùng mk2() (private của
+// WeeklyGenerators2.kt). Dãy có bước nhảy dùng (a..b step n).toList().random.
+
+private fun newNumRange(ctx: Ctx): IntRange {
+    return when (ctx.grade) {
+        1 -> 2..99
+        2 -> 10..999
+        3 -> 100..9999
+        else -> 1000..99999
+    }
+}
+
+internal fun fCompListMax(ctx: Ctx): Question? {
+    val range = newNumRange(ctx)
+    val vals = mutableSetOf<Int>()
+    while (vals.size < 4) vals += ctx.ri(range.first, range.last)
+    val list = vals.toList()
+    val max = list.maxOrNull() ?: return null
+    return mk(
+        ctx, "COMP_LIST_MAX",
+        "Trong các số ${list.joinToString(", ")}, số nào lớn nhất?",
+        max.toString(),
+        list.filter { it != max }.map { it.toString() },
+        "So sánh các số ${list.joinToString(", ")}, số lớn nhất là $max."
+    )
+}
+
+internal fun fCompListMin(ctx: Ctx): Question? {
+    val range = newNumRange(ctx)
+    val vals = mutableSetOf<Int>()
+    while (vals.size < 4) vals += ctx.ri(range.first, range.last)
+    val list = vals.toList()
+    val min = list.minOrNull() ?: return null
+    return mk(
+        ctx, "COMP_LIST_MIN",
+        "Trong các số ${list.joinToString(", ")}, số nào bé nhất?",
+        min.toString(),
+        list.filter { it != min }.map { it.toString() },
+        "So sánh các số ${list.joinToString(", ")}, số bé nhất là $min."
+    )
+}
+
+internal fun fEvenOddList(ctx: Ctx): Question? {
+    val range = if (ctx.grade <= 2) 2..99 else 10..999
+    val wantEven = ctx.random.nextBoolean()
+    val correctSet = mutableSetOf<Int>()
+    while (correctSet.size < 1) {
+        val v = ctx.ri(range.first, range.last)
+        if ((v % 2 == 0) == wantEven) correctSet += v
+    }
+    val correct = correctSet.first()
+    val others = mutableSetOf<Int>()
+    while (others.size < 3) {
+        val v = ctx.ri(range.first, range.last)
+        if ((v % 2 == 0) != wantEven && v != correct) others += v
+    }
+    val list = (others + correct).shuffled(ctx.random)
+    return mk(
+        ctx, "EVENODD_LIST",
+        if (wantEven) "Trong các số ${list.joinToString(", ")}, số nào là số chẵn?"
+        else "Trong các số ${list.joinToString(", ")}, số nào là số lẻ?",
+        correct.toString(),
+        others.map { it.toString() },
+        if (wantEven) "$correct chia hết cho 2 nên là số chẵn duy nhất trong các số đã cho."
+        else "$correct không chia hết cho 2 nên là số lẻ duy nhất trong các số đã cho."
+    )
+}
+
+internal fun fPlaceTensUnits(ctx: Ctx): Question? {
+    return if (ctx.grade >= 3) {
+        val h = ctx.ri(1, 9); val t = ctx.ri(0, 9); val u = ctx.ri(0, 9)
+        val n = h * 100 + t * 10 + u
+        mk(
+            ctx, "PLACE_TENS_UNITS",
+            "Số gồm $h trăm, $t chục và $u đơn vị là số nào?",
+            n.toString(),
+            numDistractors(n, ctx),
+            "$h trăm là ${h * 100}, $t chục là ${t * 10}, $u đơn vị là $u, nên số đó là $n."
+        )
+    } else {
+        val t = ctx.ri(1, 9); val u = ctx.ri(0, 9)
+        val n = t * 10 + u
+        mk(
+            ctx, "PLACE_TENS_UNITS",
+            "Số gồm $t chục và $u đơn vị là số nào?",
+            n.toString(),
+            numDistractors(n, ctx),
+            "$t chục là ${t * 10}, $u đơn vị là $u, nên số đó là $n."
+        )
+    }
+}
+
+internal fun fGroupCount(ctx: Ctx): Question? {
+    val a = if (ctx.grade <= 2) ctx.ri(2, 9) else ctx.ri(3, 12)
+    val b = if (ctx.grade <= 2) ctx.ri(2, 9) else ctx.ri(3, 12)
+    val total = a * b
+    return mk(
+        ctx, "GROUP_COUNT",
+        "Có $a nhóm, mỗi nhóm có $b chấm. Hỏi tất cả có bao nhiêu chấm?",
+        total.toString(),
+        numDistractors(total, ctx),
+        "Mỗi nhóm có $b chấm, $a nhóm có $a × $b = $total chấm."
+    )
+}
+
+internal fun fExprBiggest(ctx: Ctx): Question? {
+    val a = ctx.ri(2, 50); val b = ctx.ri(2, 50)
+    val c = ctx.ri(2, 12); val d = ctx.ri(2, 12)
+    val e = ctx.ri(20, 99); val f = ctx.ri(2, e - 1)
+    val exprs = listOf("$a + $b" to a + b, "$c × $d" to c * d, "$e - $f" to e - f)
+    val results = exprs.map { it.second }
+    if (results.distinct().size != 3) return null
+    val biggest = exprs.maxByOrNull { it.second } ?: return null
+    return mk(
+        ctx, "EXPR_BIGGEST",
+        "Phép tính nào có kết quả lớn nhất: ${exprs[0].first}, ${exprs[1].first} hay ${exprs[2].first}?",
+        biggest.first,
+        exprs.filter { it != biggest }.map { it.first },
+        "${exprs[0].first} = ${exprs[0].second}, ${exprs[1].first} = ${exprs[1].second}, ${exprs[2].first} = ${exprs[2].second}, nên ${biggest.first} lớn nhất."
+    )
+}
+
+internal fun fMoneyChange(ctx: Ctx): Question? {
+    return if (ctx.grade >= 3) {
+        val step = 1000
+        val price = (5..40 step 5).toList().random(ctx.random) * step
+        val change = (5..20 step 5).toList().random(ctx.random) * step
+        val pay = price + change
+        mk(
+            ctx, "MONEY_CHANGE",
+            "Lan đưa $pay đồng để mua một món đồ giá $price đồng. Hỏi Lan được trả lại bao nhiêu đồng?",
+            "$change đồng",
+            listOf("${change + step} đồng", "$price đồng", "$pay đồng"),
+            "$pay - $price = $change, nên Lan được trả lại $change đồng."
+        )
+    } else {
+        val pay = if (ctx.grade == 1) 50 else 100
+        val price = ctx.ri(10, pay - 5)
+        val change = pay - price
+        mk(
+            ctx, "MONEY_CHANGE",
+            "Lan đưa $pay đồng để mua một món đồ giá $price đồng. Hỏi Lan được trả lại bao nhiêu đồng?",
+            "$change đồng",
+            listOf("${change + 5} đồng", "$price đồng", "$pay đồng"),
+            "$pay - $price = $change, nên Lan được trả lại $change đồng."
+        )
+    }
+}
+
+internal fun fUnitConvSimple(ctx: Ctx): Question? {
+    // Triple: đơn vị đầu, đơn vị cuối, hệ số đổi.
+    val conv = when (ctx.grade) {
+        1 -> listOf(Triple("dm", "cm", 10), Triple("m", "dm", 10))
+        2 -> listOf(Triple("m", "cm", 100), Triple("dm", "cm", 10), Triple("m", "dm", 10))
+        3 -> listOf(Triple("km", "m", 1000), Triple("m", "cm", 100), Triple("kg", "g", 1000), Triple("l", "ml", 1000))
+        else -> listOf(Triple("tấn", "kg", 1000), Triple("m²", "dm²", 100), Triple("giờ", "phút", 60), Triple("km", "m", 1000))
+    }.random(ctx.random)
+    val v = ctx.ri(2, 9)
+    val correct = v * conv.third
+    return mk(
+        ctx, "UNIT_CONV_SIMPLE",
+        "${v}${conv.first} = ? ${conv.second}",
+        "$correct ${conv.second}",
+        listOf("$v ${conv.second}", "${correct + conv.third} ${conv.second}", "${correct - conv.third} ${conv.second}"),
+        "1${conv.first} = ${conv.third}${conv.second}, nên ${v}${conv.first} = $v × ${conv.third} = $correct ${conv.second}."
+    )
+}
+
+internal fun fWordGroup(ctx: Ctx): Question? {
+    return if (ctx.random.nextBoolean()) {
+        val b = if (ctx.grade == 1) ctx.ri(2, 3) else if (ctx.grade == 2) ctx.ri(2, 5) else ctx.ri(2, 9)
+        val q = if (ctx.grade == 1) ctx.ri(2, 5) else if (ctx.grade == 2) ctx.ri(2, 9) else ctx.ri(3, 12)
+        val total = b * q
+        val obj = pickObj(ctx)
+        mk(
+            ctx, "WORD_GROUP",
+            "Có $total $obj chia đều cho $b bạn. Hỏi mỗi bạn được bao nhiêu $obj?",
+            "$q $obj",
+            listOf("${q + 1} $obj", "${q - 1} $obj", "$total $obj"),
+            "$total : $b = $q, nên mỗi bạn được $q $obj."
+        )
+    } else {
+        val a = if (ctx.grade == 1) ctx.ri(2, 10) else if (ctx.grade == 2) ctx.ri(2, 20) else ctx.ri(5, 50)
+        val times = if (ctx.grade == 1) ctx.ri(2, 3) else ctx.ri(2, 5)
+        val total = a * times
+        val name = pickName(ctx)
+        mk(
+            ctx, "WORD_GROUP",
+            "An có $a quyển vở, $name có số vở gấp $times lần số vở của An. Hỏi $name có bao nhiêu quyển vở?",
+            "$total quyển vở",
+            numDistractors(total, ctx).map { "$it quyển vở" },
+            "$a × $times = $total, nên $name có $total quyển vở."
+        )
+    }
+}
+
+internal fun fPlaceDigitValue(ctx: Ctx): Question? {
+    // Chọn hàng (10, 100, 1000, 10000) theo lớp, dựng số sao cho chữ số ở hàng đó khác 0.
+    val place = when (ctx.grade) {
+        1 -> 10
+        2 -> if (ctx.random.nextBoolean()) 10 else 100
+        3 -> if (ctx.random.nextBoolean()) 100 else 1000
+        else -> if (ctx.random.nextBoolean()) 1000 else 10000
+    }
+    val placeName = when (place) {
+        10 -> "chục"
+        100 -> "trăm"
+        1000 -> "nghìn"
+        else -> "chục nghìn"
+    }
+    val d = ctx.ri(1, 9)
+    val low = ctx.ri(0, place - 1)
+    // Giữ số trong phạm vi lớp: lớp 1 chỉ tới 99, lớp 2 chỉ tới 999.
+    val high = when {
+        ctx.grade == 1 -> 0
+        ctx.grade == 2 && place == 100 -> 0
+        place == 10 -> ctx.ri(0, 8)
+        else -> ctx.ri(0, 9)
+    }
+    val n = high * place * 10 + d * place + low
+    val value = d * place
+    return mk(
+        ctx, "PLACE_DIGIT_VALUE",
+        "Trong số $n, chữ số $d ở hàng $placeName có giá trị là bao nhiêu?",
+        value.toString(),
+        listOf(d.toString(), "${value * 10}", "${value + place}"),
+        "Chữ số $d ở hàng $placeName có giá trị là $d × $place = $value."
+    )
+}
+
+internal fun fAddSubChain(ctx: Ctx): Question? {
+    val a = if (ctx.grade == 1) ctx.ri(2, 20) else ctx.ri(10, 90)
+    val b = if (ctx.grade == 1) ctx.ri(2, 20) else ctx.ri(10, 90)
+    // Lớp 1 dùng số trừ nhỏ để kết quả không âm (a + b nhỏ nhất là 4).
+    val c = if (ctx.grade == 1) ctx.ri(2, a + b - 1) else ctx.ri(5, a + b - 1)
+    val result = a + b - c
+    return mk(
+        ctx, "ADD_SUB_CHAIN",
+        "$a + $b - $c = ?",
+        result.toString(),
+        numDistractors(result, ctx),
+        "$a + $b = ${a + b}, rồi trừ $c được ${a + b} - $c = $result."
+    )
+}
+
+internal fun fTriplePart(ctx: Ctx): Question? {
+    return if (ctx.random.nextBoolean()) {
+        val a = if (ctx.grade <= 2) ctx.ri(2, 30) else ctx.ri(5, 60)
+        mk(
+            ctx, "TRIPLE_PART",
+            "Gấp 3 lần số $a là số nào?",
+            (a * 3).toString(),
+            numDistractors(a * 3, ctx),
+            "Gấp 3 lần số $a là $a × 3 = ${a * 3}."
+        )
+    } else {
+        val q = if (ctx.grade <= 2) ctx.ri(2, 20) else ctx.ri(3, 30)
+        val a = q * 3
+        mk(
+            ctx, "TRIPLE_PART",
+            "Một phần ba của số $a là số nào?",
+            q.toString(),
+            numDistractors(q, ctx),
+            "Một phần ba của $a là $a : 3 = $q."
+        )
+    }
+}
+
 /** Dạng khó dùng cho 8 câu cuối, theo lớp. Lớp 1-2 chỉ dùng dạng 2 bước
  *  đơn giản và bẫy ngược nhẹ; lớp 3-5 dùng đầy đủ dạng khó của lớp đó. */
 internal fun hardFormsForGrade(grade: Int): List<String> {
