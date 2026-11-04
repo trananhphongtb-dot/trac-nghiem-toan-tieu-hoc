@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import vn.phong.toantieuhoc.data.weekDef
 import vn.phong.toantieuhoc.model.ExamKind
+import vn.phong.toantieuhoc.model.HistoryEntry
 import vn.phong.toantieuhoc.model.Question
 import vn.phong.toantieuhoc.model.QuizResult
 import vn.phong.toantieuhoc.model.WeekDef
@@ -99,23 +100,9 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(14.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Màn chính tối giản theo bản chốt: chỉ tên app, 5 nút lớp và nút lịch sử,
+            // không còn khối chữ hướng dẫn ở trên, không còn dòng chú thích ở dưới.
             Text("Bài Tập Tuần", fontSize = 36.sp, fontWeight = FontWeight.Bold, color = Color.White, textAlign = TextAlign.Center)
-            Text("Trắc nghiệm Toán tiểu học • Lớp 1 đến lớp 5", fontSize = 20.sp, color = Color.White, textAlign = TextAlign.Center)
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text("Mỗi tuần 40 câu trắc nghiệm, mỗi lần làm là một đề mới, không cố định.", fontSize = 18.sp, textAlign = TextAlign.Center)
-                    Text("Con chọn lớp của mình nhé:", fontSize = 22.sp, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
-                }
-            }
             (1..5).forEach { grade ->
                 Button(
                     onClick = { onGradeSelected(grade) },
@@ -130,7 +117,6 @@ fun HomeScreen(
                 shape = RoundedCornerShape(18.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White)
             ) { Text("Xem lịch sử làm bài", fontSize = 20.sp, color = FixedAccent, textAlign = TextAlign.Center) }
-            Text("Không quảng cáo, không đăng nhập, không cần mạng. Đề sinh ngẫu nhiên, không lặp lại bộ cũ.", fontSize = 16.sp, color = Color.White, textAlign = TextAlign.Center)
         }
     }
 }
@@ -225,13 +211,13 @@ private fun WeekGrid(grade: Int, range: IntRange, onWeek: (WeekDef) -> Unit) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun QuizScreen(
-    title: String,
     questions: List<Question>,
     index: Int,
     answers: List<Int?>,
     onAnswer: (Int) -> Unit,
     onIndex: (Int) -> Unit,
     onSubmit: () -> Unit,
+    onHome: () -> Unit,
     onTimeUp: () -> Unit
 ) {
     var remaining by remember(questions) { mutableStateOf(60 * 60) }
@@ -250,6 +236,8 @@ fun QuizScreen(
         }
         return
     }
+    // Sơ đồ nhảy câu chỉ hiện khi bấm nút pill "Đã làm X/40", bình thường ẩn.
+    var showMap by remember(questions) { mutableStateOf(false) }
     val q = questions[index]
     val chosen = answers.getOrNull(index)
     val answered = chosen != null
@@ -259,11 +247,16 @@ fun QuizScreen(
     val timeText = "%02d:%02d".format(minutes, seconds)
     BgBox {
         Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            // Đầu màn: tiêu đề + viên thuốc số câu / đồng hồ + thanh tiến trình.
-            Text(title, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White, textAlign = TextAlign.Center)
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Pill("Câu ${index + 1}/${questions.size} • Đã làm $answeredCount")
+            // Trên cùng, tối giản: chỉ thanh tiến trình, đồng hồ và nút pill tiến trình.
+            // Không còn tiêu đề "Lớp mấy - Tuần mấy".
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(modifier = Modifier.clickable { showMap = !showMap }) {
+                    Pill("Đã làm $answeredCount/${questions.size}")
+                }
                 Pill("⏰ $timeText", color = if (remaining < 300) FixedRed else FixedAccent)
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -274,71 +267,56 @@ fun QuizScreen(
                 trackColor = Color.White.copy(alpha = 0.35f)
             )
             Spacer(modifier = Modifier.height(12.dp))
-            // Vùng cuộn ở giữa: khung câu hỏi + lời giải + sơ đồ 40 câu.
+            // Vùng cuộn ở giữa: sơ đồ (chỉ khi mở) + khung câu hỏi chỉ có nội dung.
             Column(
                 modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                if (showMap) {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    ) {
+                        FlowRow(
+                            modifier = Modifier.padding(12.dp),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            questions.indices.forEach { i ->
+                                val bg = when {
+                                    i == index -> FixedAccent
+                                    answers.getOrNull(i) != null -> FixedGreen
+                                    else -> Color.LightGray
+                                }
+                                Box(
+                                    modifier = Modifier.size(40.dp).padding(3.dp).background(bg, shape = androidx.compose.foundation.shape.CircleShape).clickable {
+                                        onIndex(i)
+                                        showMap = false
+                                    },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text("${i + 1}", fontSize = 16.sp, color = Color.White, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                                }
+                            }
+                        }
+                    }
+                }
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(28.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
                     elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(24.dp),
-                        verticalArrangement = Arrangement.spacedBy(14.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Box(
-                            modifier = Modifier.background(FixedAccent, shape = RoundedCornerShape(50)).padding(horizontal = 16.dp, vertical = 6.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("Câu ${index + 1}/${questions.size}", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White, textAlign = TextAlign.Center)
-                        }
-                        Text(q.text, fontSize = 26.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-                    }
-                }
-                if (answered) {
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(20.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF8E1)),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(18.dp),
-                            verticalArrangement = Arrangement.spacedBy(6.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                if (chosen == q.correctIndex) "Đúng rồi! Tuyệt vời!" else "Chưa đúng, đáp án là ${q.correctAnswer}.",
-                                fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center
-                            )
-                            Text(q.explanation, fontSize = 18.sp, textAlign = TextAlign.Center)
-                        }
-                    }
-                }
-                Text("Sơ đồ ${questions.size} câu (bấm vào số để nhảy tới câu đó):", fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = Color.White, textAlign = TextAlign.Center)
-                FlowRow(horizontalArrangement = Arrangement.Center, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    questions.indices.forEach { i ->
-                        val bg = when {
-                            i == index -> FixedAccent
-                            answers.getOrNull(i) != null -> FixedGreen
-                            else -> Color.LightGray
-                        }
-                        Box(
-                            modifier = Modifier.size(40.dp).padding(3.dp).background(bg, shape = androidx.compose.foundation.shape.CircleShape).clickable { onIndex(i) },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("${i + 1}", fontSize = 16.sp, color = Color.White, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-                        }
-                    }
+                    // Khung câu hỏi chỉ hiện mỗi nội dung, bỏ nhãn "Câu x/40" trong khung.
+                    // Lời giải không hiện ở màn làm bài nữa, chỉ hiện ở màn xem lại câu sai.
+                    Text(q.text, fontSize = 26.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, modifier = Modifier.padding(24.dp))
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
-            // Đáy màn, cố định không cuộn: khung đáp án riêng.
+            // Đáy màn, cố định không cuộn: khung đáp án riêng, 2 hàng x 2 nút.
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(24.dp),
@@ -350,26 +328,34 @@ fun QuizScreen(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("Chọn đáp án", fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = Color.Gray, textAlign = TextAlign.Center)
-                    q.options.forEachIndexed { optionIndex, option ->
-                        val color = when {
-                            !answered -> FixedAccent
-                            optionIndex == q.correctIndex -> FixedGreen
-                            optionIndex == chosen -> FixedRed
-                            else -> FixedMuted
-                        }
-                        Button(
-                            onClick = { if (!answered) onAnswer(optionIndex) },
-                            modifier = Modifier.fillMaxWidth().height(58.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = color)
-                        ) {
-                            Text("${'A' + optionIndex}. $option", fontSize = 21.sp, textAlign = TextAlign.Center)
+                    // 2 hàng đáp án, mỗi hàng 2 nút ngang nhau, dễ bấm.
+                    for (row in 0..1) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            for (col in 0..1) {
+                                val optionIndex = row * 2 + col
+                                val option = q.options[optionIndex]
+                                // Chỉ tô màu sau khi chọn, không hiện lời giải ở đây.
+                                val color = when {
+                                    !answered -> FixedAccent
+                                    optionIndex == q.correctIndex -> FixedGreen
+                                    optionIndex == chosen -> FixedRed
+                                    else -> FixedMuted
+                                }
+                                Button(
+                                    onClick = { if (!answered) onAnswer(optionIndex) },
+                                    modifier = Modifier.weight(1f).height(58.dp),
+                                    shape = RoundedCornerShape(16.dp),
+                                    colors = ButtonDefaults.buttonColors(containerColor = color)
+                                ) {
+                                    Text("${'A' + optionIndex}. $option", fontSize = 21.sp, textAlign = TextAlign.Center)
+                                }
+                            }
                         }
                     }
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
+            // Giữ nguyên 2 nút Câu trước / Câu tiếp theo bản chốt.
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 OutlinedButton(
                     onClick = { if (index > 0) onIndex(index - 1) },
@@ -385,14 +371,21 @@ fun QuizScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = FixedAccent)
                 ) { Text(if (index == questions.lastIndex) "Nộp bài" else "Câu tiếp", fontSize = 19.sp, textAlign = TextAlign.Center) }
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedButton(
-                onClick = onSubmit,
-                modifier = Modifier.fillMaxWidth().height(52.dp),
-                shape = RoundedCornerShape(18.dp),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = FixedAccent)
-            ) {
-                Text("Nộp bài ngay", fontSize = 19.sp, textAlign = TextAlign.Center)
+            Spacer(modifier = Modifier.height(10.dp))
+            // Dưới cùng, luôn hiện, cố định không cuộn: Nộp bài ngay + Về trang chủ.
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Button(
+                    onClick = onSubmit,
+                    modifier = Modifier.weight(1f).height(56.dp),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = FixedAccent)
+                ) { Text("Nộp bài ngay", fontSize = 19.sp, textAlign = TextAlign.Center) }
+                Button(
+                    onClick = onHome,
+                    modifier = Modifier.weight(1f).height(56.dp),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                ) { Text("Về trang chủ", fontSize = 19.sp, color = FixedAccent, textAlign = TextAlign.Center) }
             }
         }
     }
@@ -445,8 +438,8 @@ fun ResultScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text("Câu ${i + 1}: ${q.text}", fontSize = 19.sp, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
-                                Text("Con chọn: ${q.options.getOrNull(chosen) ?: "?"}", fontSize = 18.sp, color = FixedRed, textAlign = TextAlign.Center)
-                                Text("Đáp án đúng: ${q.correctAnswer}", fontSize = 18.sp, color = FixedGreen, textAlign = TextAlign.Center)
+                                // Con chọn và đáp án đúng gộp thành 1 hàng duy nhất, 1 Text duy nhất.
+                                Text("Con chọn: ${q.options.getOrNull(chosen) ?: "?"} • Đáp án đúng: ${q.correctAnswer}", fontSize = 18.sp, textAlign = TextAlign.Center)
                                 Text(q.explanation, fontSize = 17.sp, textAlign = TextAlign.Center)
                             }
                         }
@@ -476,35 +469,131 @@ fun ResultScreen(
 }
 
 @Composable
-fun HistoryScreen(lines: List<String>, onBack: () -> Unit) {
+fun HistoryScreen(
+    entries: List<HistoryEntry>,
+    onRedo: (HistoryEntry) -> Unit,
+    onReview: (HistoryEntry) -> Unit,
+    onBack: () -> Unit
+) {
     BgBox {
         Column(
-            modifier = Modifier.fillMaxSize().padding(20.dp).verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxSize().padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text("Lịch sử làm bài", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Color.White, textAlign = TextAlign.Center)
-            if (lines.isEmpty()) {
-                Text("Chưa có lượt làm bài nào. Con làm thử 1 đề nhé!", fontSize = 20.sp, color = Color.White, textAlign = TextAlign.Center)
-            } else {
-                lines.forEach { line ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(20.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                    ) {
-                        Text(line, fontSize = 18.sp, modifier = Modifier.padding(16.dp), textAlign = TextAlign.Center)
+            Spacer(modifier = Modifier.height(12.dp))
+            // Danh sách cuộn được, chiếm phần còn lại; nút Về trang chủ ở dưới
+            // nằm ngoài vùng cuộn nên luôn hiện, không bị trôi khi lịch sử dài.
+            Column(
+                modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (entries.isEmpty()) {
+                    Text("Chưa có lượt làm bài nào. Con làm thử 1 đề nhé!", fontSize = 20.sp, color = Color.White, textAlign = TextAlign.Center)
+                } else {
+                    // entries lưu mới nhất lên đầu, nhưng số Lần tăng theo thời gian:
+                    // lần đầu tiên là Lần 1, lần mới nhất có số lớn nhất.
+                    entries.forEachIndexed { displayIndex, entry ->
+                        val attemptNumber = entries.size - displayIndex
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(20.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(10.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                // Mỗi entry chỉ 1 dòng ngắn gọn duy nhất.
+                                Text(entry.shortLine(attemptNumber), fontSize = 18.sp, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
+                                // Ngay trong thẻ mỗi dòng lịch sử: 1 hàng 2 nút ngang nhau.
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    Button(
+                                        onClick = { onRedo(entry) },
+                                        modifier = Modifier.weight(1f).height(52.dp),
+                                        shape = RoundedCornerShape(16.dp),
+                                        colors = ButtonDefaults.buttonColors(containerColor = FixedAccent)
+                                    ) { Text("Làm lại", fontSize = 19.sp, textAlign = TextAlign.Center) }
+                                    Button(
+                                        onClick = { onReview(entry) },
+                                        modifier = Modifier.weight(1f).height(52.dp),
+                                        shape = RoundedCornerShape(16.dp),
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                                    ) { Text("Xem câu sai", fontSize = 19.sp, color = FixedAccent, textAlign = TextAlign.Center) }
+                                }
+                            }
+                        }
                     }
                 }
             }
-            OutlinedButton(
+            Spacer(modifier = Modifier.height(12.dp))
+            // Nút đặc, không dùng OutlinedButton mờ nữa, luôn hiện ở đáy.
+            Button(
                 onClick = onBack,
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = RoundedCornerShape(18.dp),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = FixedAccent)
+                colors = ButtonDefaults.buttonColors(containerColor = FixedAccent)
             ) {
-                Text("Quay lại", fontSize = 20.sp, textAlign = TextAlign.Center)
+                Text("Về trang chủ", fontSize = 20.sp, textAlign = TextAlign.Center)
+            }
+        }
+    }
+}
+
+@Composable
+fun WrongReviewScreen(
+    entry: HistoryEntry,
+    onBack: () -> Unit
+) {
+    BgBox {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Xem lại câu sai", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Color.White, textAlign = TextAlign.Center)
+            Text("Lớp ${entry.grade} - ${entry.scopeLabel} - ${entry.correct}/${entry.total} câu đúng", fontSize = 18.sp, color = Color.White, textAlign = TextAlign.Center)
+            Spacer(modifier = Modifier.height(12.dp))
+            Column(
+                modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (entry.wrong.isEmpty()) {
+                    Text("Không còn câu sai.", fontSize = 20.sp, color = Color.White, textAlign = TextAlign.Center)
+                } else {
+                    entry.wrong.forEach { w ->
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(20.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(6.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(w.text, fontSize = 19.sp, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
+                                // Con chọn và đáp án đúng gộp thành 1 hàng duy nhất, 1 Text duy nhất.
+                                Text("Con chọn: ${w.chosenAnswer} • Đáp án đúng: ${w.correctAnswer}", fontSize = 18.sp, textAlign = TextAlign.Center)
+                                // Lời giải chỉ hiện ở màn xem lại câu sai, không hiện ở màn làm bài.
+                                Text(w.explanation, fontSize = 17.sp, textAlign = TextAlign.Center)
+                            }
+                        }
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Button(
+                onClick = onBack,
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape = RoundedCornerShape(18.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = FixedAccent)
+            ) {
+                Text("Quay lại lịch sử", fontSize = 20.sp, textAlign = TextAlign.Center)
             }
         }
     }
