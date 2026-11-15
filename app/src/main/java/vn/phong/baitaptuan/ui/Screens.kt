@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -75,7 +76,9 @@ fun BgBox(content: @Composable () -> Unit) {
             drawCircle(Color.White.copy(alpha = 0.12f), radius = size.width * 0.45f, center = Offset(size.width * 0.05f, size.height * 0.55f))
             drawCircle(Color.White.copy(alpha = 0.3f), radius = size.width * 0.18f, center = Offset(size.width * 0.15f, size.height * 0.92f))
         }
-        content()
+        Box(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
+            content()
+        }
     }
 }
 

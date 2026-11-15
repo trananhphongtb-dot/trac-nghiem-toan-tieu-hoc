@@ -3,16 +3,31 @@
     android:height="108dp"
     android:viewportWidth="48"
     android:viewportHeight="48">
+    <!-- nền xanh lá -->
     <path
-        android:fillColor="#1565C0"
-        android:pathData="M8,4h32a4,4 0 0,1 4,4v32a4,4 0 0,1 -4,4H8a4,4 0 0,1 -4,-4V8a4,4 0 0,1 4,-4z" />
-    <path
-        android:fillColor="#FFD54F"
-        android:pathData="M14,34L24,18L34,34z" />
+        android:fillColor="#2E7D32"
+        android:pathData="M10,4h28a6,6 0 0,1 6,6v28a6,6 0 0,1 -6,6H10a6,6 0 0,1 -6,-6V10a6,6 0 0,1 6,-6z" />
+    <!-- tờ bài tập -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M22,10h4v8h8v4h-8v8h-4v-8h-8v-4h8z" />
+        android:pathData="M13,9h20a2,2 0 0,1 2,2v26a2,2 0 0,1 -2,2H13a2,2 0 0,1 -2,-2V11a2,2 0 0,1 2,-2z" />
+    <!-- dải đầu tờ -->
     <path
-        android:fillColor="#FF8A65"
-        android:pathData="M38,30a4,4 0 1,0 0.1,0z" />
+        android:fillColor="#FFB300"
+        android:pathData="M11,11a2,2 0 0,1 2,-2h20a2,2 0 0,1 2,2v4H11z" />
+    <!-- dòng kẻ -->
+    <path
+        android:fillColor="#B0BEC5"
+        android:pathData="M15,22h14v2H15zM15,28h10v2H15zM15,34h8v2H15z" />
+    <!-- dấu tích -->
+    <path
+        android:fillColor="#43A047"
+        android:pathData="M27,31l2.2,-2.2l2.3,2.3l5.3,-5.3l2.2,2.2l-7.5,7.5z" />
+    <!-- bút chì -->
+    <path
+        android:fillColor="#FF7043"
+        android:pathData="M34,40l8,-14l3,1.7l-8,14z" />
+    <path
+        android:fillColor="#37474F"
+        android:pathData="M34,40l-0.8,3.8l3.8,-2.1z" />
 </vector>
