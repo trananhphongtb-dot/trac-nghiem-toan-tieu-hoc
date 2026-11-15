@@ -100,7 +100,7 @@ class MainActivity : ComponentActivity() {
                     currentExam = exam
                     redoSourceId = redoId
                     startWith(
-                        if (subject == Subject.TOAN) mixToanTuDuy(generateExamSet(grade, exam), grade, 8)
+                        if (subject == Subject.TOAN) mixToanTuDuy(generateExamSet(grade, exam), grade, 6, 12)
                         else generateSubjectExam(subject, grade, exam),
                         "${subject.titleFor(grade)} • Lớp $grade • ${exam.title}$note • Tuần ${exam.weeks.first}–${exam.weeks.last}"
                     )

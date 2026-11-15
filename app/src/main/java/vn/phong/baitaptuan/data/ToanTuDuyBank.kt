@@ -90,16 +90,17 @@ Một số nhân với 3 được 4,5. Số đó là:|1,5|13,5|15|0,15||4,5 : 3 
  * Thay [take] câu ngẫu nhiên trong đề [base] bằng câu Toán tư duy của lớp [grade].
  * Số câu của đề không đổi.
  */
-fun mixToanTuDuy(base: List<Question>, grade: Int, take: Int = 5): List<Question> {
+fun mixToanTuDuy(base: List<Question>, grade: Int, take: Int = 4, generated: Int = 8): List<Question> {
     val block = TU_DUY[grade] ?: return base
     val random = Random(System.nanoTime())
-    val extra = items(block).shuffled(random).take(take).mapNotNull { item ->
+    val fixed = items(block).shuffled(random).take(take).mapNotNull { item ->
         val wrongs = item.wrong.filter { it != item.correct && it.isNotBlank() }.distinct()
         if (wrongs.size < 3) null else {
             val options = (listOf(item.correct) + wrongs.shuffled(random).take(3)).shuffled(random)
             Question(item.q, options, options.indexOf(item.correct), item.expl.ifBlank { "Đáp án đúng là “${item.correct}”." }, "TUDUY")
         }
     }
+    val extra = (fixed + generateToanTuDuy(grade, generated, random)).distinctBy { it.text }
     if (extra.isEmpty() || base.size < extra.size) return base
     val result = base.toMutableList()
     val slots = result.indices.shuffled(random).take(extra.size)

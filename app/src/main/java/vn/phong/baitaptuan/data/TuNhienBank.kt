@@ -478,5 +478,30 @@ Trái Đất chuyển động quay quanh:|Mặt Trời|Mặt Trăng|sao Hỏa|sa
 Mặt Trăng chuyển động quay quanh:|Trái Đất|Mặt Trời|sao Hỏa|sao Kim||Mặt Trăng là vệ tinh của Trái Đất.
 Trái Đất có dạng:|hình cầu|hình vuông|hình tam giác|phẳng như tờ giấy||Trái Đất gần giống hình cầu.
 Trái Đất tự quay quanh mình tạo ra:|ngày và đêm|bốn mùa|nhật thực|thủy triều||Nửa được chiếu sáng là ban ngày.
+""")),
+    Topic(1, 1..14, "Gia đình và trường học (bổ sung)",
+        items = items("""
+Mẹ của bố em là:|bà nội|bà ngoại|dì|cô||Mẹ của bố là bà nội.
+Người sinh ra em là:|bố mẹ|bạn bè|thầy cô|hàng xóm||Bố mẹ sinh ra và nuôi dạy em.
+Việc làm nào giữ lớp học sạch?|nhặt rác bỏ vào thùng|vứt rác xuống sàn|vẽ bậy lên tường|xả rác ra sân||Giữ gìn lớp học sạch đẹp.
+Khi đi xe máy, em phải:|đội mũ bảo hiểm|đứng lên yên xe|cầm điện thoại|ngủ gật||Mũ bảo hiểm bảo vệ đầu.
+Qua đường ở nơi có đèn tín hiệu, em đi khi đèn:|xanh cho người đi bộ|đỏ cho người đi bộ|vàng nhấp nháy|đã tắt||Đèn xanh cho người đi bộ mới được qua.
+""")),
+    Topic(1, 15..28, "Con người và sức khỏe (bổ sung)",
+        items = items("""
+Mắt giúp em:|nhìn|nghe|ngửi|nếm||Mắt là cơ quan nhìn.
+Tai giúp em:|nghe|nhìn|ngửi|nếm||Tai là cơ quan nghe.
+Mũi giúp em:|ngửi|nhìn|nghe|đi||Mũi là cơ quan ngửi.
+Lưỡi giúp em:|nếm vị|nhìn|nghe|ngửi||Lưỡi nếm vị thức ăn.
+Mỗi ngày em nên đánh răng ít nhất:|2 lần|1 lần mỗi tuần|không cần đánh|10 lần||Đánh răng sáng và tối.
+Sau khi ăn xong, em nên:|súc miệng hoặc đánh răng|ăn thêm kẹo|nằm ngay xuống|chạy nhảy mạnh||Giữ răng miệng sạch.
+""")),
+    Topic(1, 22..35, "Thực vật, động vật và bầu trời (bổ sung)",
+        items = items("""
+Con vật nào sống dưới nước?|con cá|con gà|con chó|con mèo||Cá sống dưới nước.
+Con vật nào có 2 chân?|con gà|con chó|con mèo|con trâu||Gà có 2 chân.
+Phần nào của cây giữ cây đứng vững trong đất?|rễ|lá|hoa|quả||Rễ bám vào đất.
+Mặt Trời mọc vào lúc:|buổi sáng|nửa đêm|buổi tối|lúc trời mưa||Mặt Trời mọc ở hướng đông vào buổi sáng.
+Ban đêm trên bầu trời em có thể thấy:|Mặt Trăng và các vì sao|Mặt Trời|cầu vồng|nắng gắt||Ban đêm có trăng, sao.
 """))
 )

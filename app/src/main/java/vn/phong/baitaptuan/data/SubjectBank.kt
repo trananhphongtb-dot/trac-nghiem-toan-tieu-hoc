@@ -89,8 +89,8 @@ internal fun catList(block: String): List<Pair<String, List<String>>> = block.li
 // ---------- Tra cứu chủ đề ----------
 
 private fun allTopics(subject: Subject): List<Topic> = when (subject) {
-    Subject.TIENG_VIET -> tiengVietTopics()
-    Subject.TIENG_ANH -> tiengAnhTopics()
+    Subject.TIENG_VIET -> tiengVietTopics() + tiengVietExtraTopics()
+    Subject.TIENG_ANH -> tiengAnhTopics() + tiengAnhExtraTopics()
     Subject.TU_NHIEN -> tuNhienTopics()
     Subject.LICH_SU_DIA_LI -> lichSuDiaLiTopics()
     Subject.TOAN -> emptyList()
