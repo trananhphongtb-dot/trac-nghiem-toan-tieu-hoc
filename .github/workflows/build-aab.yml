@@ -1,0 +1,42 @@
+name: Build AAB
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.13"
+      - name: Build release bundle
+        run: gradle bundleRelease --no-daemon --stacktrace
+      - name: Create upload keystore and sign AAB
+        run: |
+          mkdir -p out keystore
+          PASS=$(openssl rand -hex 12)
+          keytool -genkeypair -v -keystore keystore/upload.jks -alias upload \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass "$PASS" -keypass "$PASS" \
+            -dname "CN=Bai Tap Tuan, O=Phong, C=VN"
+          jarsigner -keystore keystore/upload.jks -storepass "$PASS" \
+            -sigalg SHA256withRSA -digestalg SHA-256 \
+            -signedjar out/BaiTapTuan-release.aab \
+            app/build/outputs/bundle/release/app-release.aab upload
+          jarsigner -verify out/BaiTapTuan-release.aab | head -3
+          printf 'alias=upload\npassword=%s\n' "$PASS" > keystore/upload-info.txt
+          ls -l out keystore
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BaiTapTuan-release-aab
+          path: out/BaiTapTuan-release.aab
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BaiTapTuan-upload-keystore-GIU-LAI
+          path: keystore/*

@@ -1,4 +1,4 @@
-package vn.phong.toantieuhoc.model
+package vn.phong.baitaptuan.model
 
 /** Một câu trắc nghiệm được sinh ngẫu nhiên trong một lượt làm bài.
  *  Không có câu cố định: mỗi lần sinh, số, thứ tự câu và thứ tự đáp án đều khác.
@@ -55,13 +55,27 @@ data class HistoryEntry(
     val examTitle: String?,
     val correct: Int,
     val total: Int,
-    val wrong: List<WrongQuestion>
+    val wrong: List<WrongQuestion>,
+    val subject: Subject = Subject.TOAN
 ) {
     /** Nhãn phạm vi: "Tuần 8" cho đề tuần, tên đề cho đề kỳ. */
     val scopeLabel: String get() = if (week != null) "Tuần $week" else (examTitle ?: "Đề kiểm tra")
     /** Dòng ngắn gọn duy nhất của entry, số Lần do màn lịch sử tính thêm. */
     fun shortLine(attemptNumber: Int): String =
-        "Lần $attemptNumber: Lớp $grade - $scopeLabel - $correct/$total câu đúng"
+        "Lần $attemptNumber: ${subject.titleFor(grade)} - Lớp $grade - $scopeLabel - $correct/$total câu đúng"
+}
+
+/** Môn học. [grades] là các lớp có môn này. */
+enum class Subject(val title: String, val grades: IntRange) {
+    TOAN("Toán", 1..5),
+    TIENG_VIET("Tiếng Việt", 1..5),
+    TIENG_ANH("Tiếng Anh", 1..5),
+    TU_NHIEN("Tự nhiên & Xã hội / Khoa học", 1..5),
+    LICH_SU_DIA_LI("Lịch sử & Địa lí", 4..5);
+
+    /** Tên môn theo lớp: lớp 1-3 học Tự nhiên và Xã hội, lớp 4-5 học Khoa học. */
+    fun titleFor(grade: Int): String =
+        if (this == TU_NHIEN) (if (grade <= 3) "Tự nhiên và Xã hội" else "Khoa học") else title
 }
 
 /** Một tuần học. [estimated] = true khi báo cáo nghiên cứu ghi tuần đó là
@@ -72,7 +86,8 @@ data class WeekDef(
     val week: Int,
     val title: String,
     val estimated: Boolean,
-    val forms: List<String>
+    val forms: List<String>,
+    val subject: Subject = Subject.TOAN
 )
 
 enum class ExamKind(val title: String, val weeks: IntRange) {

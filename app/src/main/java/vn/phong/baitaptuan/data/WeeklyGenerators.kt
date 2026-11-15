@@ -1,6 +1,6 @@
-package vn.phong.toantieuhoc.data
+package vn.phong.baitaptuan.data
 
-import vn.phong.toantieuhoc.model.Question
+import vn.phong.baitaptuan.model.Question
 import kotlin.math.abs
 import kotlin.random.Random
 

@@ -1,10 +1,11 @@
-package vn.phong.toantieuhoc.data
+package vn.phong.baitaptuan.data
 
 import android.content.Context
 import org.json.JSONArray
 import org.json.JSONObject
-import vn.phong.toantieuhoc.model.HistoryEntry
-import vn.phong.toantieuhoc.model.WrongQuestion
+import vn.phong.baitaptuan.model.HistoryEntry
+import vn.phong.baitaptuan.model.Subject
+import vn.phong.baitaptuan.model.WrongQuestion
 
 /** Lưu lịch sử làm bài có cấu trúc trên máy, không cần tài khoản, không cần mạng.
  *
@@ -56,6 +57,7 @@ class HistoryStore(context: Context) {
         val obj = JSONObject()
         obj.put("id", e.id)
         obj.put("grade", e.grade)
+        obj.put("subject", e.subject.name)
         if (e.week != null) obj.put("week", e.week) else obj.put("week", JSONObject.NULL)
         if (e.examTitle != null) obj.put("examTitle", e.examTitle) else obj.put("examTitle", JSONObject.NULL)
         obj.put("correct", e.correct)
@@ -107,7 +109,8 @@ class HistoryStore(context: Context) {
                 examTitle = if (obj.isNull("examTitle")) null else obj.optString("examTitle"),
                 correct = obj.optInt("correct", 0),
                 total = obj.optInt("total", 0),
-                wrong = wrong
+                wrong = wrong,
+                subject = Subject.values().firstOrNull { it.name == obj.optString("subject") } ?: Subject.TOAN
             )
         } catch (_: Exception) {
             null
