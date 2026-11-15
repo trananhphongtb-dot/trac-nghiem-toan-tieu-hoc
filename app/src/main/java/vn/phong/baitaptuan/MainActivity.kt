@@ -3,7 +3,8 @@ package vn.phong.baitaptuan
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
+import androidx.activity.enableEdgeToEdge
+import vn.phong.baitaptuan.ui.AppTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,10 +42,11 @@ private sealed interface Screen {
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         val historyStore = HistoryStore(this)
         setContent {
-            MaterialTheme {
+            AppTheme {
                 var screen by remember { mutableStateOf<Screen>(Screen.Home) }
                 var subject by remember { mutableStateOf(Subject.TOAN) }
                 var grade by remember { mutableStateOf(1) }
@@ -166,11 +168,13 @@ class MainActivity : ComponentActivity() {
                     Screen.Weeks -> WeekScreen(
                         subject = subject,
                         grade = grade,
+                        entries = historyEntries,
                         onWeek = { startWeek(it) },
                         onExam = { startExam(it) },
                         onBack = { screen = Screen.Grades }
                     )
                     Screen.Quiz -> QuizScreen(
+                        subject = subject,
                         questions = questions,
                         index = index,
                         answers = answers,
