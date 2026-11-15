@@ -182,5 +182,106 @@ Cồng chiêng Tây Nguyên được UNESCO công nhận là:|di sản văn hóa
 Sài Gòn là tên cũ của:|Thành phố Hồ Chí Minh|Hà Nội|Cần Thơ|Biên Hòa||Sài Gòn nay là Thành phố Hồ Chí Minh.
 Cần Thơ nổi tiếng với:|chợ nổi Cái Răng|phố cổ|ruộng bậc thang|cồng chiêng||Chợ nổi Cái Răng ở Cần Thơ.
 Mũi Cà Mau là điểm cực Nam trên:|đất liền của nước ta|biển Đông|đảo Phú Quốc|cao nguyên||Cực Nam trên đất liền.
+""")),
+    Topic(4, 1..4, "Bản đồ và phương hướng (bổ sung)",
+        items = items("""
+Bản đồ là:|hình vẽ thu nhỏ một khu vực của bề mặt Trái Đất|bức ảnh chụp cận cảnh|bài thơ về quê hương|bức tranh phong cảnh||Bản đồ thu nhỏ bề mặt Trái Đất.
+Bốn hướng chính trên bản đồ là:|bắc, nam, đông, tây|trên, dưới, trái, phải|sáng, trưa, chiều, tối|xuân, hạ, thu, đông||Bắc, nam, đông, tây.
+Hướng đối diện với hướng bắc là:|nam|đông|tây|đông bắc||Bắc đối diện nam.
+Mặt Trời mọc ở hướng:|đông|tây|nam|bắc||Hướng đông.
+Tỉ lệ bản đồ cho biết:|khoảng cách trên bản đồ thu nhỏ bao nhiêu lần so với thực tế|màu của bản đồ|tuổi của bản đồ|số dân của khu vực||Tỉ lệ cho biết mức thu nhỏ.
+Kí hiệu bản đồ dùng để:|thể hiện các đối tượng địa lí trên bản đồ|trang trí bản đồ|đo nhiệt độ|ghi tên tác giả||Bảng chú giải giải thích kí hiệu.
+""")),
+    Topic(4, 5..10, "Trung du và miền núi Bắc Bộ (bổ sung 2)",
+        items = items("""
+Đỉnh núi nào được gọi là “nóc nhà Đông Dương”?|Phan-xi-păng|Ngọc Linh|Lang Biang|Bà Nà||Phan-xi-păng thuộc dãy Hoàng Liên Sơn.
+Thái Nguyên nổi tiếng về cây:|chè|cà phê|cao su|hồ tiêu||Chè Thái Nguyên nổi tiếng.
+Lễ hội Lồng Tồng là của dân tộc:|Tày|Ê-đê|Khmer|Ba Na||Lồng Tồng là lễ hội xuống đồng của người Tày.
+Người dân miền núi làm nhà sàn để:|tránh ẩm thấp và thú dữ|đi biển dễ hơn|tránh tuyết|trồng cây trên mái||Nhà sàn thích hợp với vùng núi.
+Nhà máy thủy điện Hòa Bình nằm trên sông:|sông Đà|sông Hồng|sông Mã|sông Cả||Thủy điện Hòa Bình trên sông Đà.
+Ruộng bậc thang thường thấy ở:|vùng núi|vùng biển|sa mạc|đồng bằng ven biển||Người dân khai phá sườn núi trồng lúa.
+""")),
+    Topic(4, 11..18, "Đồng bằng Bắc Bộ (bổ sung 2)",
+        items = items("""
+Sông nào bồi đắp nên đồng bằng Bắc Bộ?|sông Hồng|sông Cửu Long|sông Mã|sông Đà Rằng||Phù sa sông Hồng bồi đắp.
+Thủ đô Hà Nội nằm ở vùng:|đồng bằng Bắc Bộ|Tây Nguyên|Nam Bộ|duyên hải miền Trung||Hà Nội thuộc đồng bằng Bắc Bộ.
+Văn Miếu – Quốc Tử Giám nằm ở:|Hà Nội|Huế|Đà Nẵng|Cần Thơ||Được xem là trường đại học đầu tiên của nước ta.
+Dân ca quan họ là của tỉnh:|Bắc Ninh|Quảng Nam|Khánh Hòa|Cà Mau||Quan họ Bắc Ninh là di sản văn hóa.
+Tranh dân gian Đông Hồ là sản phẩm của:|đồng bằng Bắc Bộ|Tây Nguyên|Nam Bộ|vùng núi Tây Bắc||Làng Đông Hồ thuộc Bắc Ninh.
+Cây trồng chính của đồng bằng Bắc Bộ là:|lúa nước|cà phê|cao su|hồ tiêu||Đồng bằng Bắc Bộ là vựa lúa phía Bắc.
+Đê ven sông được đắp để:|ngăn nước lũ|chứa nước biển|trồng rừng|dẫn gió||Đê giúp chống lũ.
+""")),
+    Topic(4, 19..26, "Duyên hải miền Trung (bổ sung 2)",
+        items = items("""
+Cố đô Huế nằm ở vùng:|duyên hải miền Trung|Nam Bộ|Tây Nguyên|đồng bằng Bắc Bộ||Huế là cố đô thời Nguyễn.
+Đèo Hải Vân nằm giữa Huế và:|Đà Nẵng|Nha Trang|Quy Nhơn|Vinh||Đèo Hải Vân nối Huế và Đà Nẵng.
+Nha Trang nổi tiếng về:|du lịch biển|trồng chè|khai thác than|ruộng bậc thang||Nha Trang có biển đẹp.
+Duyên hải miền Trung thường chịu:|bão, lũ lụt, hạn hán|tuyết rơi|động đất lớn|băng giá||Miền Trung hay có thiên tai.
+Hội An là di sản thế giới nổi tiếng với:|phố cổ|hang động|ruộng bậc thang|đảo san hô||Phố cổ Hội An.
+Phong Nha – Kẻ Bàng nổi tiếng với:|hang động|phố cổ|ruộng bậc thang|rừng ngập mặn||Là di sản thế giới với nhiều hang động.
+""")),
+    Topic(4, 27..30, "Tây Nguyên (bổ sung 2)",
+        items = items("""
+Cây công nghiệp nổi tiếng nhất Tây Nguyên là:|cà phê|bông vải|mía|lúa nước||Tây Nguyên trồng nhiều cà phê.
+Cồng chiêng Tây Nguyên là:|di sản văn hóa phi vật thể|loại cây công nghiệp|món ăn|loại nhà ở||Không gian văn hóa cồng chiêng.
+Đất ba dan ở Tây Nguyên thích hợp trồng:|cà phê, cao su, hồ tiêu|lúa nước ngập sâu|chè mạn|cói||Đất đỏ ba dan màu mỡ.
+Các dân tộc sinh sống lâu đời ở Tây Nguyên là:|Ê-đê, Gia Rai, Ba Na|Tày, Nùng, Thái|Khmer, Chăm, Hoa|Dao, Mông, Mường||Dân tộc bản địa Tây Nguyên.
+Nhà rông là nơi sinh hoạt chung của:|buôn làng Tây Nguyên|làng chài ven biển|làng nghề đồng bằng|bản vùng cao Tây Bắc||Nhà rông của người Ba Na, Xơ Đăng.
+""")),
+    Topic(4, 31..35, "Nam Bộ (bổ sung 2)",
+        items = items("""
+Vựa lúa lớn nhất cả nước là:|đồng bằng sông Cửu Long|đồng bằng Bắc Bộ|Tây Nguyên|duyên hải miền Trung||Đồng bằng sông Cửu Long sản xuất nhiều lúa gạo.
+Thành phố đông dân nhất cả nước là:|Thành phố Hồ Chí Minh|Hà Nội|Cần Thơ|Đà Nẵng||Thành phố Hồ Chí Minh đông dân nhất.
+Sông Mê Công chảy vào Nam Bộ chia thành các nhánh:|sông Tiền và sông Hậu|sông Đà và sông Lô|sông Cả|sông Mã||Tiền Giang và Hậu Giang.
+Chợ nổi là nét văn hóa đặc trưng của:|đồng bằng sông Cửu Long|Tây Bắc|Tây Nguyên|đồng bằng Bắc Bộ||Buôn bán trên sông.
+Cần Thơ nằm ở:|đồng bằng sông Cửu Long|Tây Nguyên|đồng bằng Bắc Bộ|duyên hải miền Trung||Cần Thơ là trung tâm của đồng bằng sông Cửu Long.
+Rừng ngập mặn ở Cà Mau có nhiều cây:|đước, mắm|thông|lim|pơ mu||Cây chịu được nước mặn.
+Điểm cực Nam trên đất liền nước ta là:|Mũi Cà Mau|Mũi Né|Mũi Nai|Mũi Đại Lãnh||Mũi Cà Mau.
+""")),
+    Topic(5, 1..6, "Đất nước, dân cư và khí hậu (bổ sung)",
+        items = items("""
+Việt Nam nằm ở khu vực:|Đông Nam Á|Nam Á|Tây Âu|Bắc Mĩ||Nước ta thuộc Đông Nam Á.
+Phía bắc nước ta giáp:|Trung Quốc|Lào|Cam-pu-chia|Thái Lan||Biên giới phía bắc với Trung Quốc.
+Phía tây nước ta giáp:|Lào và Cam-pu-chia|Trung Quốc|Biển Đông|Thái Lan||Biên giới phía tây.
+Khí hậu nước ta là khí hậu:|nhiệt đới gió mùa|ôn đới|hàn đới|sa mạc||Nóng ẩm, có gió mùa.
+Dân tộc có số dân đông nhất ở nước ta là:|Kinh|Tày|Mường|Thái||Người Kinh chiếm đa số.
+Nước ta có bao nhiêu dân tộc?|54|63|34|45||Có 54 dân tộc anh em.
+Cây lương thực chính của nước ta là:|lúa gạo|cà phê|cao su|chè||Lúa gạo là cây lương thực chính.
+Đảo lớn nhất nước ta là:|Phú Quốc|Cát Bà|Cồn Cỏ|Lý Sơn||Phú Quốc lớn nhất.
+Thủ đô của nước ta là:|Hà Nội|Huế|Đà Nẵng|Thành phố Hồ Chí Minh||Hà Nội là thủ đô.
+Đại dương lớn nhất thế giới là:|Thái Bình Dương|Đại Tây Dương|Ấn Độ Dương|Bắc Băng Dương||Thái Bình Dương lớn nhất.
+Châu lục lớn nhất thế giới là:|châu Á|châu Phi|châu Âu|châu Mĩ||Châu Á lớn nhất.
+""")),
+    Topic(5, 7..12, "Dựng nước và giữ nước thuở đầu (bổ sung)",
+        items = items("""
+Hai Bà Trưng khởi nghĩa năm 40 để chống lại:|nhà Hán|nhà Tống|nhà Nguyên|quân Pháp||Khởi nghĩa Hai Bà Trưng chống ách đô hộ nhà Hán.
+Bà Triệu khởi nghĩa vào năm:|248|40|542|938||Khởi nghĩa Bà Triệu năm 248.
+Lý Bí lên ngôi vua, đặt tên nước là:|Vạn Xuân|Âu Lạc|Đại Việt|Đại Cồ Việt||Năm 544, nước Vạn Xuân ra đời.
+Ngô Quyền đánh thắng quân Nam Hán trên sông:|Bạch Đằng|Như Nguyệt|sông Mã|sông Hồng||Chiến thắng Bạch Đằng năm 938.
+Đinh Bộ Lĩnh lên ngôi, đặt tên nước là:|Đại Cồ Việt|Đại Việt|Vạn Xuân|Âu Lạc||Năm 968.
+Kinh đô của nhà Đinh đặt ở:|Hoa Lư|Thăng Long|Huế|Phú Xuân||Kinh đô Hoa Lư.
+""")),
+    Topic(5, 13..18, "Nhà Lý, nhà Trần và khởi nghĩa Lam Sơn (bổ sung)",
+        items = items("""
+Lý Công Uẩn dời đô từ Hoa Lư ra Thăng Long vào năm:|1010|938|1075|1288||Chiếu dời đô năm 1010.
+Người chỉ huy quân dân nhà Trần thắng quân Nguyên trên sông Bạch Đằng năm 1288 là:|Trần Hưng Đạo|Lê Lợi|Quang Trung|Lý Thường Kiệt||Trần Hưng Đạo là vị tướng tài.
+Khởi nghĩa Lam Sơn do ai lãnh đạo?|Lê Lợi|Nguyễn Huệ|Trần Hưng Đạo|Phan Bội Châu||Lê Lợi lãnh đạo, Nguyễn Trãi giúp sức.
+""")),
+    Topic(5, 19..26, "Tây Sơn và thực dân Pháp xâm lược (bổ sung)",
+        items = items("""
+Nguyễn Huệ lên ngôi hoàng đế, lấy hiệu là:|Quang Trung|Gia Long|Minh Mạng|Thái Tổ||Vua Quang Trung.
+Chiến thắng Ngọc Hồi – Đống Đa diễn ra năm:|1789|1288|1428|1945||Quang Trung đại phá quân Thanh.
+Nhà Nguyễn được thành lập năm:|1802|1010|1428|1945||Nguyễn Ánh lên ngôi, lấy hiệu Gia Long.
+Thực dân Pháp nổ súng xâm lược nước ta ở Đà Nẵng năm:|1858|1802|1945|1954||Mở đầu cuộc xâm lược của Pháp.
+""")),
+    Topic(5, 27..35, "Cách mạng, kháng chiến và đổi mới (bổ sung)",
+        items = items("""
+Nguyễn Tất Thành ra đi tìm đường cứu nước vào năm:|1911|1930|1945|1954||Từ bến Nhà Rồng.
+Đảng Cộng sản Việt Nam thành lập năm:|1930|1945|1954|1975||Ngày 3 tháng 2 năm 1930.
+Cách mạng tháng Tám thành công vào năm:|1945|1930|1954|1975||Giành độc lập năm 1945.
+Chủ tịch Hồ Chí Minh đọc Tuyên ngôn Độc lập tại:|quảng trường Ba Đình|Huế|Sài Gòn|Điện Biên||Ngày 2 tháng 9 năm 1945.
+Chiến dịch Điện Biên Phủ thắng lợi vào năm:|1954|1945|1975|1930||Chiến thắng Điện Biên Phủ năm 1954.
+Chiến dịch Hồ Chí Minh toàn thắng vào ngày:|30 tháng 4 năm 1975|2 tháng 9 năm 1945|7 tháng 5 năm 1954|19 tháng 8 năm 1945||Đất nước thống nhất.
+Công cuộc Đổi mới của nước ta bắt đầu từ năm:|1986|1975|1954|2000||Đổi mới năm 1986.
 """))
 )

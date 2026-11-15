@@ -157,7 +157,7 @@ private fun newRandom(): Random = Random(System.nanoTime() xor System.currentTim
 
 private fun pick(primary: List<Question>, review: List<Question>, count: Int, random: Random): List<Question> {
     val seen = HashSet<String>()
-    fun key(q: Question) = q.text + "|" + q.options.sorted().joinToString(",")
+    fun key(q: Question) = q.text + "|" + q.correctAnswer
     val out = mutableListOf<Question>()
     for (q in primary.shuffled(random) + review.shuffled(random)) {
         if (out.size >= count) break

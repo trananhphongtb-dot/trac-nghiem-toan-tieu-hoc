@@ -307,5 +307,176 @@ Bệnh viêm gan A lây qua:|đường tiêu hóa|đường hô hấp|đường 
 HIV KHÔNG lây qua con đường nào sau đây?|bắt tay, ôm nhau|truyền máu không an toàn|dùng chung kim tiêm|mẹ truyền sang con||HIV không lây qua tiếp xúc thông thường.
 Thuốc lá gây hại chủ yếu cho cơ quan nào?|phổi|tai|mắt|chân||Khói thuốc hại phổi.
 Chất nào sau đây gây nghiện?|ma túy|nước lọc|sữa|rau xanh||Ma túy gây nghiện, hại sức khỏe.
+""")),
+    // ---- Bổ sung đợt 2 ----
+    Topic(5, 1..8, "Chất và biến đổi (bổ sung 2)",
+        items = items("""
+Hỗn hợp nào sau đây là dung dịch?|nước đường|cát trộn với nước|dầu ăn trộn với nước|đất trộn với nước||Đường tan hoàn toàn trong nước.
+Chất nào sau đây tan trong nước?|muối ăn|cát|dầu ăn|sỏi||Muối ăn tan trong nước.
+Nước sôi ở nhiệt độ khoảng:|100 °C|0 °C|37 °C|50 °C||Nước sôi ở khoảng 100 °C.
+Nước đóng băng ở nhiệt độ khoảng:|0 °C|100 °C|37 °C|25 °C||Nước đóng băng ở 0 °C.
+Sự bay hơi của nước là sự chuyển từ:|thể lỏng sang thể khí|thể rắn sang thể lỏng|thể khí sang thể lỏng|thể lỏng sang thể rắn||Nước lỏng thành hơi nước.
+Sự ngưng tụ là sự chuyển từ:|thể khí sang thể lỏng|thể lỏng sang thể khí|thể rắn sang thể lỏng|thể lỏng sang thể rắn||Hơi nước gặp lạnh thành nước.
+Nước đá tan chảy là sự chuyển từ thể rắn sang:|thể lỏng|thể khí|vẫn là thể rắn|biến mất hoàn toàn||Nước đá tan thành nước lỏng.
+Biến đổi nào là biến đổi hóa học?|nấu chín thức ăn|hòa tan muối vào nước|cắt nhỏ rau|nước bay hơi||Nấu chín tạo ra chất mới.
+Biến đổi nào là biến đổi lí học?|cắt nhỏ rau|thức ăn bị ôi thiu|đinh sắt bị gỉ|nến cháy||Cắt rau không tạo chất mới.
+Muốn tách muối ra khỏi nước muối, người ta:|cho nước bay hơi|lọc qua giấy lọc|dùng nam châm|để yên cho lắng||Nước bay hơi, muối còn lại.
+Dung dịch gồm:|chất tan và dung môi|chỉ có chất rắn|chỉ có chất khí|hai chất rắn không trộn lẫn||Ví dụ: muối tan trong nước.
+""")),
+    Topic(5, 9..16, "Năng lượng (bổ sung 2)",
+        items = items("""
+Vật nào là nguồn sáng tự nhiên?|Mặt Trời|bóng đèn|đèn pin|ngọn nến||Mặt Trời tự phát ra ánh sáng.
+Nhiệt truyền từ:|vật nóng sang vật lạnh|vật lạnh sang vật nóng|vật nhẹ sang vật nặng|vật nhỏ sang vật lớn||Nhiệt truyền từ nơi nóng sang nơi lạnh.
+Vật nào dẫn nhiệt tốt?|nồi nhôm|cốc nhựa|khăn len|miếng gỗ||Kim loại dẫn nhiệt tốt.
+Âm thanh được tạo ra khi vật:|rung động|đứng yên|bị lạnh|bị ướt||Vật rung động phát ra âm thanh.
+Âm thanh có thể truyền qua:|không khí, nước và chất rắn|chỉ trong chân không|chỉ trong nước|không truyền qua gì||Âm thanh truyền qua nhiều môi trường.
+Ánh sáng truyền theo:|đường thẳng|đường cong|đường zích zắc|đường tròn||Ánh sáng truyền theo đường thẳng.
+Bóng của vật xuất hiện khi:|ánh sáng bị vật cản chặn lại|ánh sáng truyền qua hoàn toàn|không có vật nào|trời đang mưa||Vật cản ánh sáng tạo ra bóng.
+Vật cho ánh sáng truyền qua hoàn toàn là:|kính trong|tấm gỗ|tờ bìa dày|bức tường||Kính trong là vật trong suốt.
+Vật nào là nguồn điện?|pin|bóng đèn|dây điện|công tắc||Pin cung cấp điện cho mạch.
+Vật liệu nào cách điện?|nhựa|đồng|sắt|nhôm||Nhựa không dẫn điện.
+Khi mạch điện bị hở thì bóng đèn:|không sáng|sáng|bị nổ|nóng chảy||Mạch hở thì không có dòng điện.
+""")),
+    Topic(5, 17..26, "Sinh vật và môi trường (bổ sung 2)",
+        items = items("""
+Trong chuỗi thức ăn cỏ → thỏ → cáo, thỏ là:|sinh vật tiêu thụ|sinh vật sản xuất|sinh vật phân giải|không phải sinh vật||Thỏ ăn cỏ nên là sinh vật tiêu thụ.
+Sinh vật phân giải là:|nấm và vi khuẩn|cây xanh|con hổ|con thỏ||Chúng phân giải xác sinh vật.
+Khi quang hợp, cây xanh hấp thụ khí cacbonic và thải ra khí:|oxi|nitơ|hiđro|heli||Cây xanh thải khí oxi.
+Quang hợp xảy ra chủ yếu ở:|lá cây|rễ cây|thân gỗ già|hạt khô||Lá có chất diệp lục.
+Yếu tố nào là yếu tố vô sinh của môi trường?|ánh sáng, nước, đất|cây cối|con vật|nấm||Vô sinh là không phải sinh vật.
+Việc làm nào gây ô nhiễm nguồn nước?|xả chất thải chưa xử lí xuống sông|trồng cây ven sông|thu gom rác|dùng nước tiết kiệm||Chất thải làm bẩn nguồn nước.
+Nguồn nước bị ô nhiễm có thể gây ra:|nhiều bệnh cho người|da đẹp hơn|cây tốt hơn|không ảnh hưởng gì||Nước bẩn gây bệnh.
+Rừng ngập mặn có tác dụng:|chắn sóng, bảo vệ bờ biển|gây hạn hán|làm đất bạc màu|không có tác dụng||Rừng ngập mặn bảo vệ bờ biển.
+Ngày Môi trường thế giới là ngày:|5 tháng 6|1 tháng 6|5 tháng 9|20 tháng 11||Ngày 5 tháng 6 hằng năm.
+Tài nguyên nào là tài nguyên tái tạo?|rừng|than đá|dầu mỏ|khí tự nhiên||Rừng có thể trồng lại.
+Đa dạng sinh học là:|sự phong phú của các loài sinh vật|có nhiều nhà cao tầng|có nhiều xe cộ|có nhiều đường phố||Nhiều loài sinh vật cùng sống.
+""")),
+    Topic(5, 27..35, "Con người và sức khỏe (bổ sung 2)",
+        items = items("""
+Cơ quan sinh dục nữ tạo ra tế bào:|trứng|tinh trùng|hồng cầu|bạch cầu||Buồng trứng tạo trứng.
+Thai nhi lấy chất dinh dưỡng từ mẹ qua:|nhau thai và dây rốn|miệng|mũi|da||Nhau thai và dây rốn nuôi thai nhi.
+Ở tuổi dậy thì, em cần:|ăn uống đủ chất, giữ vệ sinh cơ thể|nhịn ăn|thức khuya thường xuyên|không tắm rửa||Chăm sóc sức khỏe tuổi dậy thì.
+Bệnh nào lây qua đường hô hấp?|cúm|sốt xuất huyết|sốt rét|giun sán||Cúm lây qua giọt bắn.
+Để phòng bệnh cúm, em nên:|đeo khẩu trang, rửa tay|ăn đồ sống|uống nước lã|nuôi muỗi||Phòng bệnh hô hấp.
+Nhóm thức ăn giàu chất đạm là:|thịt, cá, trứng|dầu, mỡ|đường|muối||Thịt, cá, trứng cung cấp đạm.
+Thiếu canxi và vitamin D, trẻ em dễ bị:|còi xương|béo phì|cận thị|sâu răng||Thiếu canxi gây còi xương.
+Thiếu iốt có thể gây bệnh:|bướu cổ|còi xương|quáng gà|phù thũng||Dùng muối iốt để phòng bướu cổ.
+Thiếu vitamin A có thể gây:|khô mắt, quáng gà|còi xương|bướu cổ|thiếu máu||Vitamin A tốt cho mắt.
+Khi bị bỏng nhẹ, em nên:|ngâm vết bỏng vào nước mát sạch|bôi kem đánh răng|bôi nước mắm|chọc vỡ bọng nước||Làm mát vết bỏng bằng nước sạch.
+Số điện thoại gọi cấp cứu y tế ở Việt Nam là:|115|113|114|111||115 là cấp cứu y tế.
+""")),
+    Topic(4, 1..8, "Chất: nước và không khí (bổ sung)",
+        items = items("""
+Nước ở thể lỏng có đặc điểm:|chảy được, không có hình dạng nhất định|có hình dạng nhất định|không chảy được|cứng như đá||Nước lỏng chảy và theo hình bình chứa.
+Không khí có ở:|khắp xung quanh chúng ta|chỉ ở trên núi|chỉ trong nhà|chỉ trong chai||Không khí bao quanh Trái Đất.
+Không khí cần cho:|sự hô hấp và sự cháy|chỉ cho việc ngủ|chỉ cho việc ăn|chỉ cho việc học||Không có không khí thì không thở, không cháy.
+Mây được tạo thành do hơi nước:|ngưng tụ lại|bay hơi hết|đóng băng ở mặt đất|biến thành cát||Hơi nước gặp lạnh ngưng tụ thành mây.
+Trong vòng tuần hoàn của nước, nước ở sông, biển:|bay hơi lên không trung|biến mất hoàn toàn|biến thành đất|biến thành đá||Nước bay hơi rồi ngưng tụ, rơi xuống thành mưa.
+Nước sạch có đặc điểm:|trong, không màu, không mùi|đục, có mùi|có màu lạ|có váng||Nước sạch trong và không mùi.
+Để làm sạch nước đục, em có thể dùng:|bình lọc nước (cát, sỏi, than)|muối|đường|dầu ăn||Lọc nước bằng cát, sỏi, than.
+Gió là:|không khí chuyển động|nước chuyển động|đất chuyển động|ánh sáng chuyển động||Gió là không khí chuyển động.
+""")),
+    Topic(4, 9..16, "Ánh sáng, âm thanh và nhiệt (bổ sung)",
+        items = items("""
+Vật nào tự phát ra ánh sáng?|Mặt Trời|Mặt Trăng|quyển sách|cái gương||Mặt Trời là nguồn sáng tự nhiên.
+Âm thanh to hay nhỏ phụ thuộc vào:|độ mạnh của rung động|màu sắc|mùi vị|hình dạng||Rung động mạnh thì âm to.
+Tiếng ồn quá lớn gây hại cho:|tai và sức khỏe|chân|tóc|móng tay||Tiếng ồn làm hại thính giác.
+Vật nào cách nhiệt tốt?|bông, len|nhôm|đồng|sắt||Len và bông giữ ấm.
+Nhiệt kế dùng để:|đo nhiệt độ|đo chiều dài|đo cân nặng|đo thời gian||Nhiệt kế đo độ nóng, lạnh.
+Nhiệt độ cơ thể người bình thường khoảng:|37 °C|20 °C|50 °C|100 °C||Cơ thể khỏe mạnh khoảng 37 °C.
+Mặc áo màu sáng vào ngày nắng nóng sẽ:|đỡ nóng hơn|nóng hơn|không khác gì|bị lạnh||Màu sáng hấp thụ ít nhiệt hơn.
+""")),
+    Topic(4, 17..26, "Thực vật, động vật và nấm (bổ sung)",
+        items = items("""
+Rễ cây có chức năng:|hút nước và muối khoáng|quang hợp|tạo hạt|tạo hoa||Rễ hút nước từ đất.
+Hoa là cơ quan sinh sản của:|thực vật có hoa|động vật|nấm|vi khuẩn||Hoa tạo quả và hạt.
+Nấm men được dùng để:|làm bánh mì, bia (lên men)|làm xi măng|làm nhựa|làm gạch||Nấm men giúp bột nở, lên men.
+Gặp nấm lạ mọc ngoài tự nhiên, em nên:|không hái ăn|hái ăn ngay|cho bạn ăn|nấu canh||Có nấm độc, không ăn nấm lạ.
+Động vật nào là động vật ăn cỏ?|trâu|hổ|sư tử|cá mập||Trâu ăn cỏ.
+Động vật nào là động vật ăn thịt?|hổ|bò|thỏ|dê||Hổ ăn thịt.
+Lá cây xanh có chức năng chính là:|quang hợp|hút nước từ đất|giữ cây đứng vững|tạo mùi||Lá làm ra chất dinh dưỡng cho cây.
+""")),
+    Topic(4, 27..35, "Con người và dinh dưỡng (bổ sung)",
+        items = items("""
+Nhóm thức ăn giàu chất bột đường là:|gạo, ngô, khoai|thịt, cá|dầu, mỡ|rau xanh||Chất bột đường cung cấp năng lượng.
+Rau, quả cung cấp:|vitamin và chất khoáng|chỉ chất béo|chỉ chất đạm|chỉ chất bột||Nên ăn nhiều rau, quả.
+Dầu, mỡ cung cấp:|chất béo|chất bột đường|vitamin C|nước||Chất béo có trong dầu, mỡ.
+Em nên ăn nhiều loại thức ăn vì:|mỗi loại cung cấp chất dinh dưỡng khác nhau|để cho vui|để thật béo|vì không cần thiết||Ăn đa dạng để đủ chất.
+Béo phì thường do:|ăn quá nhiều, ít vận động|ăn quá ít|vận động quá nhiều|ngủ quá ít||Ăn nhiều, ít vận động dễ béo phì.
+Mỗi ngày em nên uống:|đủ nước lọc (đun sôi để nguội)|nước ngọt thay nước lọc|rất ít nước|chỉ nước ngọt||Uống đủ nước tốt cho sức khỏe.
+""")),
+    Topic(2, 1..8, "Gia đình và họ hàng (bổ sung 2)",
+        items = items("""
+Người sinh ra bố của em là:|ông nội|ông ngoại|bác|chú||Bố của bố là ông nội.
+Người sinh ra mẹ của em là:|bà ngoại|bà nội|dì|cô||Mẹ của mẹ là bà ngoại.
+Em trai của mẹ em gọi là:|cậu|chú|bác|dượng||Em trai của mẹ gọi là cậu.
+Em gái của bố em gọi là:|cô|dì|bác|cậu||Em gái của bố gọi là cô.
+Anh, chị, em của bố gọi là bác, chú hoặc:|cô|dì|cậu|mợ||Bác, chú, cô là họ hàng bên nội.
+Việc làm nào thể hiện sự kính trọng ông bà?|chào hỏi lễ phép|cãi lại|không trả lời|làm ngơ||Em lễ phép với ông bà.
+""")),
+    Topic(2, 9..16, "Trường học và mua bán (bổ sung 2)",
+        items = items("""
+Người đứng đầu nhà trường là:|hiệu trưởng|bảo vệ|lớp trưởng|y tá||Hiệu trưởng quản lí nhà trường.
+Giờ ra chơi em nên:|chơi trò chơi an toàn|trèo lên lan can|chạy ra đường|đánh bạn||Chơi an toàn, đoàn kết.
+Khi mua hàng, em cần:|trả tiền cho người bán|lấy hàng không trả|giấu hàng đi|giành hàng của người khác||Mua hàng phải trả tiền.
+Bưu điện là nơi:|gửi thư và bưu phẩm|khám bệnh|bán rau|dạy học||Bưu điện nhận gửi thư, bưu phẩm.
+Bệnh viện là nơi:|khám và chữa bệnh|bán hàng|gửi thư|học tập||Bác sĩ khám, chữa bệnh ở bệnh viện.
+""")),
+    Topic(2, 17..26, "Thực vật và động vật (bổ sung 2)",
+        items = items("""
+Cây thường có các bộ phận:|rễ, thân, lá|đầu, tay, chân|mắt, mũi, tai|tim, gan, phổi||Rễ, thân, lá là các bộ phận của cây.
+Con vật nào đẻ trứng?|gà|chó|mèo|trâu||Gà đẻ trứng.
+Con vật nào đẻ con?|mèo|gà|vịt|chim||Mèo đẻ con.
+Cá thở bằng:|mang|phổi|mũi|tai||Cá thở bằng mang.
+Vật nuôi trong nhà là:|chó|hổ|sư tử|cá sấu||Chó là vật nuôi thân thiết với người.
+Cây nào là cây ăn quả?|cam|lim|tre|phượng||Cam cho quả ăn được.
+Cây nào là cây lấy gỗ?|lim|cải|rau muống|lúa||Lim cho gỗ tốt.
+Rễ cây giúp cây:|bám vào đất và hút nước|bay lên cao|phát ra âm thanh|đổi màu||Rễ giữ cây và hút nước.
+""")),
+    Topic(2, 27..35, "Cơ thể, bầu trời và các mùa (bổ sung 2)",
+        items = items("""
+Cơ quan nào giúp em nhìn?|mắt|tai|mũi|lưỡi||Mắt giúp em nhìn.
+Lưỡi giúp em:|nếm vị|nghe|nhìn|ngửi||Lưỡi nhận biết vị.
+Da giúp em cảm nhận:|nóng, lạnh, đau|màu sắc|âm thanh|mùi vị||Da là cơ quan xúc giác.
+Em cần ngủ đủ giấc để:|cơ thể khỏe mạnh|dễ ốm|học kém đi|chậm lớn||Ngủ đủ giúp cơ thể khỏe.
+Ban đêm em có thể nhìn thấy:|Mặt Trăng và các vì sao|Mặt Trời|cầu vồng|nắng gắt||Ban đêm có trăng, sao.
+Một năm có mấy mùa?|4 mùa|2 mùa|3 mùa|5 mùa||Xuân, hạ, thu, đông.
+Mùa nào trời nóng nhất?|mùa hè|mùa đông|mùa xuân|mùa thu||Mùa hè nóng nhất.
+Mùa đông thời tiết thường:|lạnh|nóng|oi bức|rất nóng||Mùa đông lạnh.
+Khi trời mưa, em nên:|mặc áo mưa hoặc che ô|đi chân đất ngoài đường|chơi dưới mưa to|đứng dưới gốc cây khi có sét||Giữ ấm, giữ khô khi trời mưa.
+""")),
+    Topic(3, 1..8, "Gia đình và trường học (bổ sung 2)",
+        items = items("""
+Việc làm nào giữ vệ sinh nhà ở?|quét dọn, lau nhà|vứt rác bừa bãi|để rác trong nhà|không dọn dẹp||Nhà sạch sẽ giúp phòng bệnh.
+Phát hiện ổ điện bị hở, em nên:|báo người lớn|tự sửa|sờ vào|nghịch||Không tự ý chạm vào điện.
+Số điện thoại gọi công an ở Việt Nam là:|113|114|115|111||113 là số của công an.
+Số điện thoại gọi cứu hỏa ở Việt Nam là:|114|113|115|111||114 là số cứu hỏa.
+Khi thấy cháy, em nên:|hô to, báo người lớn và gọi 114|trốn trong tủ|tiếp tục chơi|lại gần xem||An toàn và báo người lớn.
+""")),
+    Topic(3, 9..16, "Cộng đồng và nghề nghiệp (bổ sung 2)",
+        items = items("""
+Nghề nào khám và chữa bệnh cho người?|bác sĩ|nông dân|thợ xây|giáo viên||Bác sĩ chữa bệnh.
+Nghề nào làm việc dạy học?|giáo viên|bác sĩ|công an|thợ may||Giáo viên dạy học.
+Nghề nào chuyên trồng lúa?|nông dân|ngư dân|thợ mộc|phi công||Nông dân làm ruộng.
+Ngư dân làm nghề:|đánh bắt cá|trồng lúa|xây nhà|dạy học||Ngư dân đánh bắt thủy sản.
+Khi đèn tín hiệu giao thông màu đỏ, người đi đường phải:|dừng lại|đi nhanh lên|đi chậm lại|bóp còi||Đèn đỏ là dừng lại.
+Em phải đội mũ bảo hiểm khi:|ngồi trên xe máy|đi bộ trên vỉa hè|ăn cơm|ngủ||Mũ bảo hiểm bảo vệ đầu.
+""")),
+    Topic(3, 17..26, "Thực vật và động vật (bổ sung 2)",
+        items = items("""
+Côn trùng có mấy chân?|6 chân|4 chân|8 chân|2 chân||Côn trùng có 6 chân.
+Động vật nào sau đây có xương sống?|cá|ốc sên|giun đất|sứa||Cá có xương sống.
+Thân cây gỗ có đặc điểm:|cứng, to, sống lâu năm|mềm, nhỏ|mọc dưới nước|không có thân||Ví dụ: cây xoài.
+Thân cây có nhiệm vụ:|nâng đỡ cây và vận chuyển chất|chỉ hút nước|chỉ tạo hoa|chỉ tạo mùi||Thân đưa nước, chất dinh dưỡng đi các nơi.
+""")),
+    Topic(3, 27..35, "Cơ thể người và Trái Đất (bổ sung 2)",
+        items = items("""
+Cơ quan hô hấp có nhiệm vụ:|trao đổi khí|tiêu hóa thức ăn|bơm máu|suy nghĩ||Hít oxi, thải khí cacbonic.
+Tim có nhiệm vụ:|bơm máu đi khắp cơ thể|tiêu hóa thức ăn|trao đổi khí|nhìn||Tim là cơ quan tuần hoàn.
+Não thuộc cơ quan:|thần kinh|tiêu hóa|hô hấp|bài tiết||Não điều khiển hoạt động cơ thể.
+Trái Đất chuyển động quay quanh:|Mặt Trời|Mặt Trăng|sao Hỏa|sao Kim||Trái Đất quay quanh Mặt Trời.
+Mặt Trăng chuyển động quay quanh:|Trái Đất|Mặt Trời|sao Hỏa|sao Kim||Mặt Trăng là vệ tinh của Trái Đất.
+Trái Đất có dạng:|hình cầu|hình vuông|hình tam giác|phẳng như tờ giấy||Trái Đất gần giống hình cầu.
+Trái Đất tự quay quanh mình tạo ra:|ngày và đêm|bốn mùa|nhật thực|thủy triều||Nửa được chiếu sáng là ban ngày.
 """))
 )
