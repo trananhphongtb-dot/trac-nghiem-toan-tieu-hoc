@@ -329,12 +329,90 @@ private fun WeekGrid(
     }
 }
 
+// ---------- Chọn chế độ ----------
+
+@Composable
+fun ModeScreen(title: String, onPick: (Boolean) -> Unit, onBack: () -> Unit) {
+    AppBox {
+        Column(modifier = Modifier.fillMaxSize()) {
+            TopBar("Chọn chế độ làm bài", title, onBack)
+            Column(
+                modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                AppCard(modifier = Modifier.fillMaxWidth(), onClick = { onPick(true) }) {
+                    Row(modifier = Modifier.padding(18.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Badge("⚡", Good, 56, 28)
+                        Spacer(modifier = Modifier.width(14.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("Biết đúng sai ngay", fontSize = 19.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                            Text(
+                                "Chọn xong là báo đúng hay sai bằng giọng đọc, kèm lời giải thích. Đã chọn thì không đổi được đáp án.",
+                                fontSize = 14.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+                AppCard(modifier = Modifier.fillMaxWidth(), onClick = { onPick(false) }) {
+                    Row(modifier = Modifier.padding(18.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Badge("✏️", MaterialTheme.colorScheme.primary, 56, 28)
+                        Spacer(modifier = Modifier.width(14.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("Làm hết rồi nộp", fontSize = 19.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                            Text(
+                                "Chưa cho biết đáp án. Bấm Trước để quay lại xem và đổi đáp án. Nộp bài xong mới biết kết quả.",
+                                fontSize = 14.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+                Text(
+                    "Chế độ được chọn lúc vào đề và giữ nguyên đến hết bài.",
+                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
 // ---------- Màn làm bài ----------
+
+@Composable
+private fun OptionCell(
+    modifier: Modifier,
+    letter: String,
+    text: String,
+    border: Color,
+    tint: Color,
+    badge: Color,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = modifier
+            .clip(RoundedCornerShape(14.dp))
+            .background(tint)
+            .border(2.dp, border, RoundedCornerShape(14.dp))
+            .clickable { onClick() }
+            .padding(horizontal = 10.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier.size(30.dp).clip(CircleShape).background(badge),
+            contentAlignment = Alignment.Center
+        ) { Text(letter, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White) }
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface, maxLines = 3, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
+    }
+}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun QuizScreen(
     subject: Subject,
+    instant: Boolean,
     questions: List<Question>,
     index: Int,
     answers: List<Int?>,
@@ -348,7 +426,8 @@ fun QuizScreen(
     val prefs = remember { context.getSharedPreferences("settings", Context.MODE_PRIVATE) }
     val speaker = remember { Speaker(context) }
     DisposableEffect(Unit) { onDispose { speaker.shutdown() } }
-    var autoRead by remember { mutableStateOf(prefs.getBoolean("auto_read", false)) }
+    // Mặc định tự đọc ngay khi vào câu hỏi; có công tắc để tắt.
+    var autoRead by remember { mutableStateOf(prefs.getBoolean("auto_read_v2", true)) }
 
     var remaining by remember(questions) { mutableStateOf(60 * 60) }
     LaunchedEffect(questions) {
@@ -361,7 +440,7 @@ fun QuizScreen(
     LaunchedEffect(index, autoRead, questions) {
         speaker.stop()
         if (autoRead && questions.isNotEmpty() && index in questions.indices) {
-            delay(700)
+            delay(900)
             speaker.speakQuestion(subject, index + 1, questions[index])
         }
     }
@@ -384,31 +463,33 @@ fun QuizScreen(
     val answeredCount = answers.count { it != null }
     val timeText = "%02d:%02d".format(remaining / 60, remaining % 60)
     val accent = subject.accent()
+    val primary = MaterialTheme.colorScheme.primary
 
     AppBox {
-        Column(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 8.dp)) {
+        Column(modifier = Modifier.fillMaxSize().padding(start = 12.dp, end = 12.dp, top = 4.dp, bottom = 8.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TextButton(onClick = onHome) { Text("✕ Thoát", fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                TextButton(onClick = onHome) { Text("✕", fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 Box(modifier = Modifier.clip(RoundedCornerShape(50)).clickable { showMap = !showMap }) {
                     Pill("Đã làm $answeredCount/${questions.size} ▾")
                 }
                 Pill("⏰ $timeText", color = if (remaining < 300) Bad else MaterialTheme.colorScheme.onSurface)
             }
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             LinearProgressIndicator(
                 progress = { (index + 1).toFloat() / questions.size.toFloat() },
                 modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(50)),
                 color = accent,
                 trackColor = MaterialTheme.colorScheme.surfaceVariant
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+            // Vùng giữa: câu hỏi (và lời giải ở chế độ biết ngay), cuộn khi dài.
             Column(
                 modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 if (showMap) {
                     AppCard(modifier = Modifier.fillMaxWidth()) {
@@ -437,40 +518,33 @@ fun QuizScreen(
                     }
                 }
                 AppCard(modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                "Câu ${index + 1}/${questions.size}",
-                                fontSize = 14.sp,
+                                "Câu ${index + 1}/${questions.size} • " + if (instant) "⚡ Biết ngay" else "✏️ Làm rồi nộp",
+                                fontSize = 13.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = accent,
                                 modifier = Modifier.weight(1f)
                             )
-                            FilledTonalButton(
-                                onClick = {
-                                    if (speaker.speaking) speaker.stop()
-                                    else speaker.speakQuestion(subject, index + 1, q)
-                                },
-                                shape = RoundedCornerShape(50)
-                            ) { Text(if (speaker.speaking) "⏹ Dừng" else "🔊 Đọc", fontSize = 15.sp) }
-                        }
-                        Text(
-                            q.text,
-                            fontSize = 23.sp,
-                            lineHeight = 31.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("Tự đọc khi sang câu mới", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.weight(1f))
+                            TextButton(onClick = {
+                                if (speaker.speaking) speaker.stop() else speaker.speakQuestion(subject, index + 1, q)
+                            }) { Text(if (speaker.speaking) "⏹" else "🔊", fontSize = 20.sp) }
                             Switch(
                                 checked = autoRead,
                                 onCheckedChange = {
                                     autoRead = it
-                                    prefs.edit().putBoolean("auto_read", it).apply()
+                                    prefs.edit().putBoolean("auto_read_v2", it).apply()
                                 }
                             )
                         }
+                        Text(
+                            q.text,
+                            fontSize = 22.sp,
+                            lineHeight = 30.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                         if (speaker.viMissing && subject != Subject.TIENG_ANH) {
                             Text(
                                 "Máy chưa có giọng tiếng Việt. Vào Cài đặt › Chuyển văn bản thành giọng nói để cài giọng Việt của Google.",
@@ -480,64 +554,96 @@ fun QuizScreen(
                         }
                     }
                 }
-                q.options.forEachIndexed { optionIndex, option ->
-                    val color = when {
-                        !answered -> MaterialTheme.colorScheme.outline
-                        optionIndex == q.correctIndex -> Good
-                        optionIndex == chosen -> Bad
-                        else -> MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
-                    }
-                    val tint = when {
-                        !answered -> MaterialTheme.colorScheme.surface
-                        optionIndex == q.correctIndex -> Good.copy(alpha = 0.14f)
-                        optionIndex == chosen -> Bad.copy(alpha = 0.14f)
-                        else -> MaterialTheme.colorScheme.surface
-                    }
-                    val badgeColor = when {
-                        !answered -> accent
-                        optionIndex == q.correctIndex -> Good
-                        optionIndex == chosen -> Bad
-                        else -> MaterialTheme.colorScheme.outline
-                    }
-                    Row(
+                if (instant && answered) {
+                    val right = chosen == q.correctIndex
+                    val c = if (right) Good else Bad
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(16.dp))
-                            .background(tint)
-                            .border(2.dp, color, RoundedCornerShape(16.dp))
-                            .clickable { if (!answered) onAnswer(optionIndex) }
-                            .padding(horizontal = 14.dp, vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                            .background(c.copy(alpha = 0.12f))
+                            .border(2.dp, c, RoundedCornerShape(16.dp))
+                            .padding(14.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Box(
-                            modifier = Modifier.size(36.dp).clip(CircleShape).background(badgeColor),
-                            contentAlignment = Alignment.Center
-                        ) { Text("${'A' + optionIndex}", fontSize = 17.sp, fontWeight = FontWeight.Bold, color = Color.White) }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(option, fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.weight(1f))
+                        Text(
+                            if (right) "✓ Đúng rồi!" else "✗ Sai rồi. Đáp án đúng: ${q.correctAnswer}",
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = c
+                        )
+                        if (q.explanation.isNotBlank()) {
+                            Text(q.explanation, fontSize = 15.sp, color = MaterialTheme.colorScheme.onSurface)
+                        }
                     }
                 }
-                Spacer(modifier = Modifier.height(4.dp))
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(
-                    onClick = { if (index > 0) onIndex(index - 1) },
-                    modifier = Modifier.weight(1f).height(52.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    enabled = index > 0
-                ) { Text("‹ Trước", fontSize = 16.sp) }
-                FilledTonalButton(
-                    onClick = onSubmit,
-                    modifier = Modifier.weight(1f).height(52.dp),
-                    shape = RoundedCornerShape(16.dp)
-                ) { Text("Nộp bài", fontSize = 16.sp) }
-                Button(
-                    onClick = { if (index < questions.lastIndex) onIndex(index + 1) else onSubmit() },
-                    modifier = Modifier.weight(1f).height(52.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = accent, contentColor = Color.White)
-                ) { Text(if (index == questions.lastIndex) "Nộp bài" else "Tiếp ›", fontSize = 16.sp) }
+            // Đáy màn: 4 đáp án chia 2 hàng, sát nút điều khiển.
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                for (row in 0..1) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        for (col in 0..1) {
+                            val i = row * 2 + col
+                            val option = q.options.getOrNull(i) ?: ""
+                            val border: Color
+                            val tint: Color
+                            val badge: Color
+                            if (instant && answered) {
+                                when {
+                                    i == q.correctIndex -> { border = Good; tint = Good.copy(alpha = 0.14f); badge = Good }
+                                    i == chosen -> { border = Bad; tint = Bad.copy(alpha = 0.14f); badge = Bad }
+                                    else -> { border = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f); tint = MaterialTheme.colorScheme.surface; badge = MaterialTheme.colorScheme.outline }
+                                }
+                            } else if (!instant && chosen == i) {
+                                border = primary; tint = primary.copy(alpha = 0.14f); badge = primary
+                            } else {
+                                border = MaterialTheme.colorScheme.outline; tint = MaterialTheme.colorScheme.surface; badge = accent
+                            }
+                            OptionCell(
+                                modifier = Modifier.weight(1f).fillMaxHeight().heightIn(min = 60.dp),
+                                letter = "${'A' + i}",
+                                text = option,
+                                border = border,
+                                tint = tint,
+                                badge = badge,
+                                onClick = {
+                                    if (instant) {
+                                        if (!answered) {
+                                            onAnswer(i)
+                                            speaker.speakFeedback(subject, i == q.correctIndex, q)
+                                        }
+                                    } else {
+                                        onAnswer(i)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedButton(
+                        onClick = { if (index > 0) onIndex(index - 1) },
+                        modifier = Modifier.weight(1f).height(50.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        enabled = index > 0
+                    ) { Text("Trước", fontSize = 16.sp) }
+                    FilledTonalButton(
+                        onClick = onSubmit,
+                        modifier = Modifier.weight(1f).height(50.dp),
+                        shape = RoundedCornerShape(14.dp)
+                    ) { Text("Nộp", fontSize = 16.sp) }
+                    Button(
+                        onClick = { if (index < questions.lastIndex) onIndex(index + 1) },
+                        modifier = Modifier.weight(1f).height(50.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        enabled = index < questions.lastIndex,
+                        colors = ButtonDefaults.buttonColors(containerColor = accent, contentColor = Color.White)
+                    ) { Text("Tiếp", fontSize = 16.sp) }
+                }
             }
         }
     }

@@ -129,6 +129,24 @@ class Speaker(context: Context) {
         play(segs)
     }
 
+    /** Báo đúng/sai bằng giọng, kèm đáp án đúng và lời giải. */
+    fun speakFeedback(subject: Subject, correct: Boolean, q: Question) {
+        val segs = ArrayList<Seg>()
+        fun add(text: String, forceVi: Boolean = false) {
+            val english = !forceVi && subject == Subject.TIENG_ANH && !hasVietnamese(text)
+            val clean = if (english) cleanEnglish(text) else cleanVietnamese(text)
+            if (clean.isNotBlank()) segs.add(Seg(clean, english))
+        }
+        if (correct) {
+            add("Đúng rồi!", true)
+        } else {
+            add("Sai rồi. Đáp án đúng là", true)
+            add(q.correctAnswer)
+        }
+        add(q.explanation)
+        play(segs)
+    }
+
     private fun play(segs: List<Seg>) {
         stop()
         val t = token

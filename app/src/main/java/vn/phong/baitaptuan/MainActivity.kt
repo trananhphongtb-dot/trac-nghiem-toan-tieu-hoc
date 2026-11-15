@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import vn.phong.baitaptuan.data.HistoryStore
 import vn.phong.baitaptuan.data.generateExamSet
+import vn.phong.baitaptuan.data.mixToanTuDuy
 import vn.phong.baitaptuan.data.generateWeeklySet
 import vn.phong.baitaptuan.data.generateSubjectExam
 import vn.phong.baitaptuan.data.generateSubjectWeekly
@@ -25,6 +26,7 @@ import vn.phong.baitaptuan.model.WrongQuestion
 import vn.phong.baitaptuan.ui.HistoryScreen
 import vn.phong.baitaptuan.ui.GradeScreen
 import vn.phong.baitaptuan.ui.HomeScreen
+import vn.phong.baitaptuan.ui.ModeScreen
 import vn.phong.baitaptuan.ui.QuizScreen
 import vn.phong.baitaptuan.ui.ResultScreen
 import vn.phong.baitaptuan.ui.WeekScreen
@@ -34,6 +36,7 @@ private sealed interface Screen {
     data object Home : Screen
     data object Grades : Screen
     data object Weeks : Screen
+    data object Mode : Screen
     data object Quiz : Screen
     data object Result : Screen
     data object History : Screen
@@ -64,6 +67,10 @@ class MainActivity : ComponentActivity() {
                 // 1 dòng lịch sử; null với các lượt làm bình thường.
                 var redoSourceId by remember { mutableStateOf<Long?>(null) }
                 var reviewEntry by remember { mutableStateOf<HistoryEntry?>(null) }
+                // Chế độ làm bài chọn lúc vào đề, không đổi giữa chừng:
+                // true = biết đúng/sai ngay, không đổi đáp án; false = đổi được, nộp mới biết.
+                var instant by remember { mutableStateOf(true) }
+                var modeBack by remember { mutableStateOf<Screen>(Screen.Home) }
 
                 fun startWith(newQuestions: List<Question>, newTitle: String) {
                     questions = newQuestions
@@ -71,7 +78,8 @@ class MainActivity : ComponentActivity() {
                     index = 0
                     result = null
                     quizTitle = newTitle
-                    screen = Screen.Quiz
+                    modeBack = if (screen == Screen.Mode || screen == Screen.Quiz || screen == Screen.Result) Screen.Weeks else screen
+                    screen = Screen.Mode
                 }
 
                 fun startWeek(w: WeekDef, redoId: Long? = null) {
@@ -80,7 +88,7 @@ class MainActivity : ComponentActivity() {
                     currentExam = null
                     redoSourceId = redoId
                     startWith(
-                        if (subject == Subject.TOAN) generateWeeklySet(w.grade, w.week)
+                        if (subject == Subject.TOAN) mixToanTuDuy(generateWeeklySet(w.grade, w.week), w.grade)
                         else generateSubjectWeekly(subject, w.grade, w.week),
                         "${subject.titleFor(w.grade)} • Lớp ${w.grade} • Tuần ${w.week}: ${w.title}" + if (w.estimated) " (ước tính)" else ""
                     )
@@ -92,7 +100,7 @@ class MainActivity : ComponentActivity() {
                     currentExam = exam
                     redoSourceId = redoId
                     startWith(
-                        if (subject == Subject.TOAN) generateExamSet(grade, exam)
+                        if (subject == Subject.TOAN) mixToanTuDuy(generateExamSet(grade, exam), grade, 8)
                         else generateSubjectExam(subject, grade, exam),
                         "${subject.titleFor(grade)} • Lớp $grade • ${exam.title}$note • Tuần ${exam.weeks.first}–${exam.weeks.last}"
                     )
@@ -173,13 +181,19 @@ class MainActivity : ComponentActivity() {
                         onExam = { startExam(it) },
                         onBack = { screen = Screen.Grades }
                     )
+                    Screen.Mode -> ModeScreen(
+                        title = quizTitle,
+                        onPick = { instant = it; screen = Screen.Quiz },
+                        onBack = { screen = modeBack }
+                    )
                     Screen.Quiz -> QuizScreen(
                         subject = subject,
+                        instant = instant,
                         questions = questions,
                         index = index,
                         answers = answers,
                         onAnswer = { pick ->
-                            if (answers.getOrNull(index) == null) {
+                            if (!instant || answers.getOrNull(index) == null) {
                                 answers = answers.toMutableList().also { it[index] = pick }
                             }
                         },
