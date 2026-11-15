@@ -1,7 +1,7 @@
-package vn.phong.toantieuhoc.data
+package vn.phong.baitaptuan.data
 
-import vn.phong.toantieuhoc.model.ExamKind
-import vn.phong.toantieuhoc.model.Question
+import vn.phong.baitaptuan.model.ExamKind
+import vn.phong.baitaptuan.model.Question
 import kotlin.random.Random
 
 // Phần 2: các dạng phân số, thập phân, hình học, đo lường, lời văn, thống kê.
@@ -369,7 +369,7 @@ private fun generateOne(ctx: Ctx, form: String): Question? {
         "MONEY_CHANGE" -> fMoneyChange(ctx); "UNIT_CONV_SIMPLE" -> fUnitConvSimple(ctx)
         "WORD_GROUP" -> fWordGroup(ctx); "PLACE_DIGIT_VALUE" -> fPlaceDigitValue(ctx)
         "ADD_SUB_CHAIN" -> fAddSubChain(ctx); "TRIPLE_PART" -> fTriplePart(ctx)
-        else -> null
+        else -> generateExtra(ctx, form)
     }
 }
 

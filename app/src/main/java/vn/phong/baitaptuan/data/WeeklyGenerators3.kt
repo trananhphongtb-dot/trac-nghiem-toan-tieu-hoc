@@ -1,6 +1,6 @@
-package vn.phong.toantieuhoc.data
+package vn.phong.baitaptuan.data
 
-import vn.phong.toantieuhoc.model.Question
+import vn.phong.baitaptuan.model.Question
 
 // Phần 3: các dạng khó theo đề tuần thật (VietJack/HoaTieu/VnDoc/Thư Viện Đề Thi).
 // - Bài 2-3 bước có bước trung gian không hỏi trực tiếp.

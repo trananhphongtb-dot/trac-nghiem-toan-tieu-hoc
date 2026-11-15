@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "vn.phong.toantieuhoc"
+    namespace = "vn.phong.baitaptuan"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "vn.phong.toantieuhoc"
+        applicationId = "vn.phong.baitaptuan"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

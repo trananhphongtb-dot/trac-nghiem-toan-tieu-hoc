@@ -1,106 +1,73 @@
-# Trắc Nghiệm Toán Tiểu Học — Bài tập tuần
+# Bài Tập Tuần Toán Tiểu Học
 
-App Android trắc nghiệm toán lớp 1 đến lớp 5, chạy offline, không đăng nhập, không quảng cáo, không Firebase.
+App Android bài tập tuần trắc nghiệm cho học sinh tiểu học (lớp 1 đến lớp 5), chạy offline,
+không đăng nhập, không quảng cáo, không Firebase.
 
-- Gói: `vn.phong.toantieuhoc`
+- Gói: `vn.phong.baitaptuan`
 - Nền tảng: Kotlin + Jetpack Compose, AGP 8.11.1, Kotlin 2.1.21, compileSdk/targetSdk 36, minSdk 24, Java 17
-- Build APK: GitHub Actions, chỉ lấy APK debug trước, chưa làm AAB.
+- Build APK: GitHub Actions (`.github/workflows/build-apk.yml`), lấy APK debug trước, chưa làm AAB.
+- Tên hiển thị của app: **Bài Tập Tuần Tiểu Học** (đổi ở `app/src/main/AndroidManifest.xml`, thuộc tính `android:label`).
 
-## Bản tuần mới (thay thế hoàn toàn bản cũ chia theo chủ đề/mức độ)
+## Môn học
 
-Bản cũ chia theo chủ đề (Số và phép tính, Hình học, Đo lường, …) và mức độ
-Dễ/Vừa/Khó đã bị bỏ. Bản mới chia theo **bài tập tuần**:
+Màn chính chọn môn, rồi chọn lớp, rồi chọn tuần 1–35 hoặc đề kỳ:
 
-- Chọn lớp 1–5, rồi chọn tuần 1–35: học kỳ 1 tuần 1–18, học kỳ 2 tuần 19–35.
-- Mỗi tuần ghi chủ đề của tuần đó, theo khung bộ **Kết nối tri thức** trong báo
-  cáo nghiên cứu `research_notes/bai-tap-tuan-toan-tieu-hoc-20261103-1535/report.md`.
-- Ngoài 35 tuần, mỗi lớp có 4 đề: Giữa học kỳ 1 (tuần 1–10), Cuối học kỳ 1
+| Môn | Lớp | Cách sinh đề |
+|---|---|---|
+| Toán | 1–5 | Sinh ngẫu nhiên từ các dạng bài (số, phép tính, lời văn, hình, đo lường...) |
+| Tiếng Việt | 1–5 | Ngân hàng nội dung: chữ cái/vần, chính tả, từ loại, câu, so sánh/nhân hóa, quan hệ từ, tả cảnh |
+| Tiếng Anh | 1–5 | Từ vựng (hỏi hai chiều Anh–Việt) và mẫu câu hỏi đáp, ngữ pháp cơ bản |
+| Tự nhiên và Xã hội (lớp 1–3) / Khoa học (lớp 4–5) | 1–5 | Ngân hàng nội dung theo mạch chủ đề |
+| Lịch sử và Địa lí | 4–5 | Ngân hàng nội dung: địa lí các vùng, các mốc và nhân vật lịch sử |
+
+- Mỗi tuần: tối đa 40 câu. Ngoài 35 tuần có 4 đề: Giữa học kỳ 1 (tuần 1–10), Cuối học kỳ 1
   (tuần 1–18), Giữa học kỳ 2 (tuần 19–26), Cuối năm (tuần 1–35).
-- Lớp 1–3: đề giữa kỳ được ghi rõ là **đề luyện**, vì theo Thông tư 27 lớp 1–3
-  không có kiểm tra viết giữa kỳ bắt buộc; chỉ lớp 4–5 mới có kiểm tra viết
-  giữa kỳ. Đề cuối kỳ và cuối năm thì áp dụng cho mọi lớp.
+- Lớp 1–3: đề giữa kỳ ghi là **đề luyện** (theo Thông tư 27 lớp 1–3 không có kiểm tra viết giữa kỳ bắt buộc).
 
-## Đề không cố định — quan trọng nhất
+## Đề không cố định
 
-Không có ngân hàng câu cố định làm đề. Mỗi lần làm một tuần hoặc một đề kỳ,
-app sinh ngẫu nhiên một bộ mới bằng `Random` gieo bằng thời gian hệ thống
-(`nanoTime`, không seed cố định):
+- **Toán** sinh bằng `Random` gieo theo thời gian: số, tên, đồ vật, thứ tự câu, thứ tự đáp án và đáp án
+  nhiễu đều khác nhau mỗi lượt. 8 câu cuối mỗi đề là dạng khó phù hợp lớp.
+- **Các môn khác** lấy từ ngân hàng nội dung (`SubjectBank.kt` và các file `*Bank.kt`). Mỗi lượt xáo thứ tự
+  câu và đáp án, đáp án nhiễu chọn ngẫu nhiên từ các mục cùng nhóm. Đề tuần ưu tiên nội dung của tuần đó,
+  thiếu thì bổ sung từ các chủ đề khác cùng lớp (ôn tập). Số câu độc lập trong ngân hàng còn hữu hạn
+  nên làm lại nhiều lần sẽ thấy câu quen.
+- Trong một lượt: không lặp câu, 4 đáp án không trùng nhau, đáp án đúng luôn hợp lệ.
 
-- 40 câu trắc nghiệm mỗi lượt, đủ các dạng của tuần đó (hoặc của phạm vi đề kỳ).
-- Số, tên, đồ vật trong bài toán có lời văn, thứ tự câu, thứ tự đáp án và
-  đáp án nhiễu đều ngẫu nhiên theo lượt.
-- Nút “Làm đề mới (đề khác)” sinh lại từ đầu, không lặp lại bộ cũ.
-- Trong một lượt: không lặp câu (so sánh theo nội dung câu), 4 đáp án không
-  trùng nhau, đáp án đúng luôn được kiểm tra hợp lệ (không NaN, không trống).
-- Một tờ bài tập tuần trên giấy thường chỉ khoảng 15–30 câu, nên bộ 40 câu ở
-  đây là ngân hàng luyện tập, không phải tờ đề tuần nguyên bản — điều này
-  cũng được ghi trong báo cáo nghiên cứu.
+## Nội dung Toán đã đối chiếu với phiếu bài tập tuần trên mạng
 
-## Màn làm bài (bản làm lại, giao diện câu hỏi đẹp hơn)
+Đã xem phiếu bài tập cuối tuần Toán 3 Kết nối tri thức (tuần 2, 25, 26, 30) và đề kiểm tra các lớp, rồi bổ sung:
 
-- Trên đầu: tiêu đề đề + viên thuốc số câu/đã làm và đồng hồ + thanh tiến trình.
-- Ở giữa, vùng cuộn: KHUNG CÂU HỎI riêng — card trắng bo tròn lớn, huy hiệu
-  “Câu x/40”, câu hỏi chữ lớn, đậm, căn giữa; đã trả lời thì lời giải hiện
-  ngay dưới khung câu hỏi, rồi mới tới sơ đồ 40 câu (bấm vào số để nhảy câu).
-- Ở đáy, cố định không cuộn: KHUNG ĐÁP ÁN riêng — card trắng bo tròn chứa
-  4 nút đáp án lớn, chữ căn giữa, dễ bấm bằng ngón tay; đúng xanh, sai đỏ,
-  các nút khác mờ đi sau khi chọn. Dưới khung đáp án là hàng Câu trước /
-  Câu tiếp và nút Nộp bài.
-- Thanh tiến trình trên đầu theo số câu đã làm, kèm đồng hồ đếm ngược
-  giới hạn 60 phút; hết giờ tự nộp bài.
-- Câu đã trả lời thì khóa, không trả lời lại được, hiện giải thích ngay.
-- Nộp bài ra điểm thang 10, sao, và xem lại câu sai kèm đáp án đúng + giải thích.
-- Lịch sử làm bài lưu trên máy bằng SharedPreferences, tối đa 50 lượt.
+- `FIND_X`: tìm x kiểu `243 + x = 254 + 142`, `x - 207 = 312`, `x × 8 = 64`, `a : x = b`.
+- `TIMES`: gấp lên / giảm đi một số lần, số này gấp mấy lần số kia, bằng một phần mấy.
+- `DIGIT_EXT`: số lớn nhất, nhỏ nhất có n chữ số (cả trường hợp các chữ số khác nhau).
+- `CALC_RIGHT`: chọn phép tính đúng trong 4 phép tính.
+- Chỉnh lại khung Toán lớp 3 tuần 1–3: tuần 1 ôn số trong phạm vi 1000, tuần 2 ôn cộng trừ và tìm
+  thành phần, tuần 3 ôn bảng nhân chia 2 và 5.
 
-## Nội dung khó theo đề tuần thật
+Các dạng cũ (so sánh, phân số, thập phân, hình học, đo lường, lời văn, biểu đồ...) giữ nguyên.
 
-- Thêm `WeeklyGenerators3.kt` (không xóa generator cũ): 20 dạng khó mới,
-  ví dụ bài mật ong 3 bước lớp 3, gạo bán 1/2 rồi 5/8 phần còn lại lớp 5,
-  bẫy chữ ngược, đổi đơn vị ngay trong bài (cm/dm, kg/g, m²/cm²), đọc bảng
-  rồi tính tổng, đọc biểu đồ quạt thiếu % rồi tính số học sinh, tìm x nhiều
-  bước bằng tính ngược, hình ẩn (chiều rộng từ chu vi hình vuông, vành khăn),
-  trung bình ngược, tổng–hiệu có số ở giữa, số dư phép chia thập phân, bài
-  nâng cao cuối đề (ca nô xuôi/ngược rồi lá trôi, làm chung công việc).
-- 8 câu cuối của mỗi đề (tuần và đề kỳ) luôn là dạng khó phù hợp lớp:
-  lớp 1–2 chỉ dùng dạng 2 bước đơn giản và bẫy ngược nhẹ; lớp 3–5 dùng
-  đầy đủ dạng khó của lớp đó. 32 câu đầu vẫn là dạng của tuần/phạm vi đề kỳ.
-- Mỗi dạng đều có lời giải từng bước đúng số học và 4 đáp án phân biệt.
+## Khung tuần Toán — chỗ chưa chắc chắn
 
-## Giao diện và icon
+Chi tiết ở `app/src/main/java/vn/phong/baitaptuan/data/WeekTopics.kt`:
 
-- Icon app là vector tự vẽ (`app/src/main/res/drawable/ic_app.xml`: nền xanh,
-  tam giác vàng, dấu cộng trắng, chấm cam), không dùng icon mặc định
-  `ic_dialog_info` nữa.
-- Ảnh nền dọc CỐ ĐỊNH duy nhất cho toàn app: gradient xanh dương đậm trên
-  xuống nhạt dưới + vài hình tròn mờ vẽ bằng Canvas, không tải ảnh ngoài
-  nên APK vẫn nhẹ, không còn màn chọn nền ở trang chính.
-- Tất cả tiêu đề, mô tả, câu hỏi, đáp án, kết quả đều căn giữa.
-- Màn chọn tuần: thứ tự Học kỳ 1 (tuần 1–18), Học kỳ 2 (tuần 19–35), rồi
-  mới tới phần Đề kiểm tra ở dưới cùng, rồi nút Quay lại.
+- Lớp 2 và lớp 5: bảng tuần đầy đủ.
+- Lớp 1, 3, 4: một số tuần ghi “(ước tính)”; trường có thể lệch 1 tuần ở các tuần ranh giới.
+- Các môn ngoài Toán chia theo chủ đề theo mạch kiến thức, không bám số tuần chính xác của một bộ sách.
 
-## Khung tuần đã dùng — và chỗ chưa chắc chắn
+## Cấu trúc code
 
-Chi tiết đầy đủ ở `app/src/main/java/vn/phong/toantieuhoc/data/WeekTopics.kt`:
-
-- Lớp 2 và lớp 5: bảng tuần đầy đủ từng tuần, đã xác minh trong báo cáo.
-- Lớp 1, 3, 4: một số tuần trong báo cáo chỉ là giai đoạn (ghi dấu ~), app
-  ghi rõ các tuần đó bằng chữ “(ước tính)” trên nút tuần và trong tiêu đề đề.
-  Trường có thể lệch 1 tuần ở các tuần ranh giới.
-- Tuần 16 lớp 1 không có trong báo cáo nên app ghi là “Luyện tập chung
-  (ước tính)”, dùng dạng của giai đoạn xung quanh, không bịa chủ đề mới.
-- Các khoảng tuần chồng nhau (ví dụ tuần 8 lớp 2 vừa kết thúc cộng/trừ 20
-  vừa bắt đầu kg/lít) được xử lý theo nguyên tắc khoảng khai sau thắng;
-  nội dung cũ vẫn quay lại ở đề kỳ và đề ôn tập.
-- Các dạng câu chưa kiểm chứng bằng biên dịch thật: bộ sinh được rà soát
-  bằng tay (ngoặc, import, đáp án trùng, NaN, và lỗi `(range step n).random`
-  đã sửa thành `.toList().random`), nhưng chưa chạy được trình biên dịch
-  Kotlin trong môi trường này (không có kotlinc/Java) và chưa build APK.
-  Bước đẩy lên GitHub và build GitHub Actions sẽ là bước kiểm chứng biên
-  dịch thật đầu tiên cho bản tuần này.
+- `model/Models.kt`: `Subject`, `Question`, `WeekDef`, `HistoryEntry`...
+- `data/WeekTopics.kt`, `WeeklyGenerators*.kt`: Toán.
+- `data/SubjectBank.kt`: bộ máy sinh đề cho môn ngoài Toán (câu cố định, cặp từ, nhóm từ).
+- `data/TiengVietBank.kt`, `TiengAnhBank.kt`, `TuNhienBank.kt`, `LichSuDiaLiBank.kt`: nội dung từng môn.
+  Thêm câu mới: dòng dạng `câu hỏi | đáp án đúng | sai 1 | sai 2 | sai 3 || lời giải`.
+- `data/HistoryStore.kt`: lịch sử làm bài (SharedPreferences, tối đa 50 lượt, có lưu môn học).
+- `ui/Screens.kt`, `MainActivity.kt`: giao diện Compose.
 
 ## Build
 
-Đẩy code lên GitHub, workflow `.github/workflows/build-apk.yml` sẽ chạy
-`gradle assembleDebug` và tải artifact `TracNghiemToan-debug` về để kiểm tra.
-Build local trong máy Muse hiện bị chặn ở kết nối TCP nội bộ của Gradle daemon
-(giống các app trước), nên đường build chính là GitHub Actions.
+Đẩy code lên GitHub, workflow chạy `gradle assembleDebug` và tải artifact `BaiTapTuan-debug` về cài thử.
+Phần dữ liệu và sinh đề (không dùng Android) đã được biên dịch và chạy thử riêng bằng trình biên dịch
+Kotlin để kiểm tra mọi môn, lớp, tuần cho đủ 40 câu và không có câu lỗi; phần giao diện Android chỉ được
+kiểm chứng khi build trên GitHub Actions.

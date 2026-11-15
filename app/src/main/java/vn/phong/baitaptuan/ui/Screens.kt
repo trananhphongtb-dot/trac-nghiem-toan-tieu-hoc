@@ -1,4 +1,4 @@
-package vn.phong.toantieuhoc.ui
+package vn.phong.baitaptuan.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -44,12 +44,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
-import vn.phong.toantieuhoc.data.weekDef
-import vn.phong.toantieuhoc.model.ExamKind
-import vn.phong.toantieuhoc.model.HistoryEntry
-import vn.phong.toantieuhoc.model.Question
-import vn.phong.toantieuhoc.model.QuizResult
-import vn.phong.toantieuhoc.model.WeekDef
+import vn.phong.baitaptuan.data.weekDefFor
+import vn.phong.baitaptuan.model.ExamKind
+import vn.phong.baitaptuan.model.HistoryEntry
+import vn.phong.baitaptuan.model.Question
+import vn.phong.baitaptuan.model.QuizResult
+import vn.phong.baitaptuan.model.Subject
+import vn.phong.baitaptuan.model.WeekDef
 
 // ---------- Nền cố định duy nhất cho toàn app ----------
 // Gradient xanh dương đậm trên xuống nhạt dưới + vài hình tròn mờ vẽ bằng
@@ -91,7 +92,7 @@ private fun Pill(text: String, color: Color = Color(0xFF0D47A1)) {
 
 @Composable
 fun HomeScreen(
-    onGradeSelected: (Int) -> Unit,
+    onSubjectSelected: (Subject) -> Unit,
     onHistory: () -> Unit
 ) {
     BgBox {
@@ -100,16 +101,16 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(14.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Màn chính tối giản theo bản chốt: chỉ tên app, 5 nút lớp và nút lịch sử,
-            // không còn khối chữ hướng dẫn ở trên, không còn dòng chú thích ở dưới.
+            // Màn chính: tên app, các môn học và nút lịch sử.
             Text("Bài Tập Tuần", fontSize = 36.sp, fontWeight = FontWeight.Bold, color = Color.White, textAlign = TextAlign.Center)
-            (1..5).forEach { grade ->
+            Text("Chọn môn học", fontSize = 20.sp, color = Color.White, textAlign = TextAlign.Center)
+            Subject.values().forEach { subject ->
                 Button(
-                    onClick = { onGradeSelected(grade) },
+                    onClick = { onSubjectSelected(subject) },
                     modifier = Modifier.fillMaxWidth().height(64.dp),
                     shape = RoundedCornerShape(18.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = FixedAccent)
-                ) { Text("Lớp $grade", fontSize = 24.sp, textAlign = TextAlign.Center) }
+                ) { Text(subject.title, fontSize = 22.sp, textAlign = TextAlign.Center) }
             }
             Button(
                 onClick = onHistory,
@@ -122,7 +123,45 @@ fun HomeScreen(
 }
 
 @Composable
+fun GradeScreen(
+    subject: Subject,
+    onGradeSelected: (Int) -> Unit,
+    onBack: () -> Unit
+) {
+    BgBox {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(20.dp).verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(subject.title, fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Color.White, textAlign = TextAlign.Center)
+            Text("Chọn lớp", fontSize = 20.sp, color = Color.White, textAlign = TextAlign.Center)
+            subject.grades.forEach { grade ->
+                Button(
+                    onClick = { onGradeSelected(grade) },
+                    modifier = Modifier.fillMaxWidth().height(64.dp),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = FixedAccent)
+                ) {
+                    Text(
+                        if (subject == Subject.TU_NHIEN) "Lớp $grade • ${subject.titleFor(grade)}" else "Lớp $grade",
+                        fontSize = 22.sp, textAlign = TextAlign.Center
+                    )
+                }
+            }
+            OutlinedButton(
+                onClick = onBack,
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape = RoundedCornerShape(18.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
+            ) { Text("Quay lại", fontSize = 20.sp, textAlign = TextAlign.Center) }
+        }
+    }
+}
+
+@Composable
 fun WeekScreen(
+    subject: Subject,
     grade: Int,
     onWeek: (WeekDef) -> Unit,
     onExam: (ExamKind) -> Unit,
@@ -130,8 +169,12 @@ fun WeekScreen(
 ) {
     BgBox {
         Column(modifier = Modifier.fillMaxSize().padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Lớp $grade • Bài tập tuần", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.White, textAlign = TextAlign.Center)
-            Text("Khung tuần theo bộ Kết nối tri thức. Tuần ghi “ước tính” là tuần theo giai đoạn, trường có thể lệch 1 tuần.", fontSize = 16.sp, color = Color.White, textAlign = TextAlign.Center)
+            Text("${subject.titleFor(grade)} • Lớp $grade", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.White, textAlign = TextAlign.Center)
+            Text(
+                if (subject == Subject.TOAN) "Khung tuần theo bộ Kết nối tri thức. Tuần ghi “ước tính” là tuần theo giai đoạn, trường có thể lệch 1 tuần."
+                else "Chủ đề theo mạch kiến thức của chương trình; mỗi lần làm ra bộ câu khác nhau.",
+                fontSize = 16.sp, color = Color.White, textAlign = TextAlign.Center
+            )
             Spacer(modifier = Modifier.height(8.dp))
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -139,9 +182,9 @@ fun WeekScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text("Học kỳ 1 • Tuần 1–18", fontSize = 22.sp, fontWeight = FontWeight.SemiBold, color = Color.White, textAlign = TextAlign.Center)
-                WeekGrid(grade, 1..18, onWeek)
+                WeekGrid(subject, grade, 1..18, onWeek)
                 Text("Học kỳ 2 • Tuần 19–35", fontSize = 22.sp, fontWeight = FontWeight.SemiBold, color = Color.White, textAlign = TextAlign.Center)
-                WeekGrid(grade, 19..35, onWeek)
+                WeekGrid(subject, grade, 19..35, onWeek)
                 // Đề kiểm tra ở dưới cùng, sau danh sách tuần.
                 Text("Đề kiểm tra", fontSize = 22.sp, fontWeight = FontWeight.SemiBold, color = Color.White, textAlign = TextAlign.Center)
                 ExamKind.values().forEach { exam ->
@@ -159,7 +202,7 @@ fun WeekScreen(
                             Text(exam.title, fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
                             Text(
                                 if (exam.isPracticeFor(grade)) "Đề luyện • Phạm vi tuần ${exam.weeks.first}–${exam.weeks.last} • Lớp $grade không có kiểm tra viết giữa kỳ bắt buộc"
-                                else "Phạm vi tuần ${exam.weeks.first}–${exam.weeks.last} • 40 câu",
+                                else "Phạm vi tuần ${exam.weeks.first}–${exam.weeks.last} • tối đa 40 câu",
                                 fontSize = 16.sp, color = Color.Gray, textAlign = TextAlign.Center
                             )
                         }
@@ -179,8 +222,8 @@ fun WeekScreen(
 }
 
 @Composable
-private fun WeekGrid(grade: Int, range: IntRange, onWeek: (WeekDef) -> Unit) {
-    val weeks = range.map { weekDef(grade, it) }
+private fun WeekGrid(subject: Subject, grade: Int, range: IntRange, onWeek: (WeekDef) -> Unit) {
+    val weeks = range.map { weekDefFor(subject, grade, it) }
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.fillMaxWidth().height((((weeks.size + 1) / 2) * 118).dp),
@@ -554,7 +597,7 @@ fun WrongReviewScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text("Xem lại câu sai", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Color.White, textAlign = TextAlign.Center)
-            Text("Lớp ${entry.grade} - ${entry.scopeLabel} - ${entry.correct}/${entry.total} câu đúng", fontSize = 18.sp, color = Color.White, textAlign = TextAlign.Center)
+            Text("${entry.subject.titleFor(entry.grade)} - Lớp ${entry.grade} - ${entry.scopeLabel} - ${entry.correct}/${entry.total} câu đúng", fontSize = 18.sp, color = Color.White, textAlign = TextAlign.Center)
             Spacer(modifier = Modifier.height(12.dp))
             Column(
                 modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),

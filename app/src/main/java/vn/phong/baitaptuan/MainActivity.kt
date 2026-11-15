@@ -1,4 +1,4 @@
-package vn.phong.toantieuhoc
+package vn.phong.baitaptuan
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,25 +8,30 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import vn.phong.toantieuhoc.data.HistoryStore
-import vn.phong.toantieuhoc.data.generateExamSet
-import vn.phong.toantieuhoc.data.generateWeeklySet
-import vn.phong.toantieuhoc.data.weekDef
-import vn.phong.toantieuhoc.model.ExamKind
-import vn.phong.toantieuhoc.model.HistoryEntry
-import vn.phong.toantieuhoc.model.Question
-import vn.phong.toantieuhoc.model.QuizResult
-import vn.phong.toantieuhoc.model.WeekDef
-import vn.phong.toantieuhoc.model.WrongQuestion
-import vn.phong.toantieuhoc.ui.HistoryScreen
-import vn.phong.toantieuhoc.ui.HomeScreen
-import vn.phong.toantieuhoc.ui.QuizScreen
-import vn.phong.toantieuhoc.ui.ResultScreen
-import vn.phong.toantieuhoc.ui.WeekScreen
-import vn.phong.toantieuhoc.ui.WrongReviewScreen
+import vn.phong.baitaptuan.data.HistoryStore
+import vn.phong.baitaptuan.data.generateExamSet
+import vn.phong.baitaptuan.data.generateWeeklySet
+import vn.phong.baitaptuan.data.generateSubjectExam
+import vn.phong.baitaptuan.data.generateSubjectWeekly
+import vn.phong.baitaptuan.data.weekDefFor
+import vn.phong.baitaptuan.model.ExamKind
+import vn.phong.baitaptuan.model.HistoryEntry
+import vn.phong.baitaptuan.model.Question
+import vn.phong.baitaptuan.model.QuizResult
+import vn.phong.baitaptuan.model.Subject
+import vn.phong.baitaptuan.model.WeekDef
+import vn.phong.baitaptuan.model.WrongQuestion
+import vn.phong.baitaptuan.ui.HistoryScreen
+import vn.phong.baitaptuan.ui.GradeScreen
+import vn.phong.baitaptuan.ui.HomeScreen
+import vn.phong.baitaptuan.ui.QuizScreen
+import vn.phong.baitaptuan.ui.ResultScreen
+import vn.phong.baitaptuan.ui.WeekScreen
+import vn.phong.baitaptuan.ui.WrongReviewScreen
 
 private sealed interface Screen {
     data object Home : Screen
+    data object Grades : Screen
     data object Weeks : Screen
     data object Quiz : Screen
     data object Result : Screen
@@ -41,6 +46,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 var screen by remember { mutableStateOf<Screen>(Screen.Home) }
+                var subject by remember { mutableStateOf(Subject.TOAN) }
                 var grade by remember { mutableStateOf(1) }
                 var quizTitle by remember { mutableStateOf("") }
                 var questions by remember { mutableStateOf<List<Question>>(emptyList()) }
@@ -72,8 +78,9 @@ class MainActivity : ComponentActivity() {
                     currentExam = null
                     redoSourceId = redoId
                     startWith(
-                        generateWeeklySet(w.grade, w.week),
-                        "Lớp ${w.grade} • Tuần ${w.week}: ${w.title}" + if (w.estimated) " (ước tính)" else ""
+                        if (subject == Subject.TOAN) generateWeeklySet(w.grade, w.week)
+                        else generateSubjectWeekly(subject, w.grade, w.week),
+                        "${subject.titleFor(w.grade)} • Lớp ${w.grade} • Tuần ${w.week}: ${w.title}" + if (w.estimated) " (ước tính)" else ""
                     )
                 }
 
@@ -83,8 +90,9 @@ class MainActivity : ComponentActivity() {
                     currentExam = exam
                     redoSourceId = redoId
                     startWith(
-                        generateExamSet(grade, exam),
-                        "Lớp $grade • ${exam.title}$note • Tuần ${exam.weeks.first}–${exam.weeks.last}"
+                        if (subject == Subject.TOAN) generateExamSet(grade, exam)
+                        else generateSubjectExam(subject, grade, exam),
+                        "${subject.titleFor(grade)} • Lớp $grade • ${exam.title}$note • Tuần ${exam.weeks.first}–${exam.weeks.last}"
                     )
                 }
 
@@ -114,7 +122,8 @@ class MainActivity : ComponentActivity() {
                         examTitle = currentExam?.title,
                         correct = correct,
                         total = questions.size,
-                        wrong = wrongList
+                        wrong = wrongList,
+                        subject = subject
                     )
                     // Lưu câu sai cũ và xóa khi làm lại đúng:
                     // nếu lượt này là Làm lại từ 1 entry, xóa khỏi danh sách
@@ -146,14 +155,20 @@ class MainActivity : ComponentActivity() {
 
                 when (screen) {
                     Screen.Home -> HomeScreen(
-                        onGradeSelected = { grade = it; screen = Screen.Weeks },
+                        onSubjectSelected = { subject = it; screen = Screen.Grades },
                         onHistory = { historyEntries = historyStore.load(); screen = Screen.History }
                     )
+                    Screen.Grades -> GradeScreen(
+                        subject = subject,
+                        onGradeSelected = { grade = it; screen = Screen.Weeks },
+                        onBack = { screen = Screen.Home }
+                    )
                     Screen.Weeks -> WeekScreen(
+                        subject = subject,
                         grade = grade,
                         onWeek = { startWeek(it) },
                         onExam = { startExam(it) },
-                        onBack = { screen = Screen.Home }
+                        onBack = { screen = Screen.Grades }
                     )
                     Screen.Quiz -> QuizScreen(
                         questions = questions,
@@ -181,7 +196,7 @@ class MainActivity : ComponentActivity() {
                                     val w = currentWeek
                                     val e = currentExam
                                     if (w != null) {
-                                        startWeek(weekDef(grade, w))
+                                        startWeek(weekDefFor(subject, grade, w))
                                     } else if (e != null) {
                                         startExam(e)
                                     } else {
@@ -200,10 +215,11 @@ class MainActivity : ComponentActivity() {
                             // Làm lại đúng lớp và đúng tuần/đề kỳ của entry đó,
                             // sinh đề mới ngẫu nhiên, đồng thời ghi nhớ id nguồn
                             // để khi nộp bài thì xóa bớt câu sai cũ đã làm đúng.
+                            subject = entry.subject
                             grade = entry.grade
                             val w = entry.week
                             if (w != null) {
-                                startWeek(weekDef(entry.grade, w), redoId = entry.id)
+                                startWeek(weekDefFor(entry.subject, entry.grade, w), redoId = entry.id)
                             } else {
                                 val exam = ExamKind.values().firstOrNull { it.title == entry.examTitle }
                                 if (exam != null) {
