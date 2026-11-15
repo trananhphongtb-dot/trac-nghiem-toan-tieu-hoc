@@ -12,13 +12,90 @@ import java.util.Locale
 
 /**
  * Đọc câu hỏi bằng bộ đọc có sẵn của Android (TextToSpeech), không cần mạng.
- * Dùng 2 bộ đọc riêng: tiếng Việt và tiếng Anh, để môn Tiếng Anh đọc đúng giọng.
+ * Dùng 2 kênh riêng: tiếng Việt và tiếng Anh. Mỗi kênh thử lần lượt bộ đọc Google,
+ * bộ đọc mặc định, rồi các bộ đọc khác trên máy, cho tới khi tìm được bộ có đúng ngôn ngữ.
  */
 class Speaker(context: Context) {
-    private var vi: TextToSpeech? = null
-    private var en: TextToSpeech? = null
-    private var viOk = false
-    private var enOk = false
+    private val app = context.applicationContext
+
+    private inner class Lane(val locale: Locale, val rate: Float, val onStatus: (Boolean) -> Unit) {
+        var tts: TextToSpeech? = null
+        var ready = false
+        private val tried = HashSet<String>()
+        private var pending: List<String> = emptyList()
+        private var shut = false
+
+        fun start() = connect(GOOGLE)
+
+        private fun connect(engine: String?) {
+            if (shut) return
+            tried.add(engine ?: "")
+            var created: TextToSpeech? = null
+            var earlyStatus: Int? = null
+            val listener = TextToSpeech.OnInitListener { status ->
+                val t = created
+                if (t == null) earlyStatus = status else onInit(t, status)
+            }
+            created = try {
+                if (engine != null) TextToSpeech(app, listener, engine) else TextToSpeech(app, listener)
+            } catch (e: Exception) {
+                null
+            }
+            tts = created
+            val made = created
+            val early = earlyStatus
+            if (made == null) tryNext() else if (early != null) onInit(made, early)
+        }
+
+        private fun onInit(t: TextToSpeech, status: Int) {
+            if (shut) {
+                t.shutdown()
+                return
+            }
+            if (status == TextToSpeech.SUCCESS) {
+                val r = try { t.setLanguage(locale) } catch (e: Exception) { TextToSpeech.LANG_NOT_SUPPORTED }
+                if (r != TextToSpeech.LANG_MISSING_DATA && r != TextToSpeech.LANG_NOT_SUPPORTED) {
+                    t.setSpeechRate(rate)
+                    ready = true
+                    onStatus(true)
+                    return
+                }
+                val others = try { t.engines.map { it.name } } catch (e: Exception) { emptyList() }
+                t.shutdown()
+                pending = others.filter { it !in tried }
+            } else {
+                t.shutdown()
+            }
+            tryNext()
+        }
+
+        private fun tryNext() {
+            ready = false
+            if ("" !in tried) {
+                connect(null)
+                return
+            }
+            val next = pending.firstOrNull { it !in tried }
+            if (next != null) {
+                connect(next)
+            } else {
+                tts = null
+                onStatus(false)
+            }
+        }
+
+        fun stop() {
+            try { tts?.stop() } catch (e: Exception) {}
+        }
+
+        fun shutdown() {
+            shut = true
+            ready = false
+            try { tts?.stop(); tts?.shutdown() } catch (e: Exception) {}
+            tts = null
+        }
+    }
+
     private var token = 0
 
     /** true khi máy chưa có giọng tiếng Việt, để app nhắc người dùng cài. */
@@ -28,51 +105,12 @@ class Speaker(context: Context) {
     var speaking by mutableStateOf(false)
         private set
 
+    private val vi = Lane(Locale("vi", "VN"), 0.9f) { ok -> viMissing = !ok }
+    private val en = Lane(Locale.US, 0.85f) { }
+
     init {
-        create(context.applicationContext, Locale("vi", "VN"), 0.9f, GOOGLE, { vi = it }) { ok ->
-            viOk = ok
-            viMissing = !ok
-        }
-        create(context.applicationContext, Locale.US, 0.85f, GOOGLE, { en = it }) { ok -> enOk = ok }
-    }
-
-    /**
-     * Ưu tiên bộ đọc của Google. Nếu không có hoặc không có đúng giọng của ngôn ngữ cần đọc
-     * thì thử bộ đọc mặc định; vẫn không đúng ngôn ngữ thì coi như chưa có giọng,
-     * tránh việc máy đọc nhầm bằng giọng ngôn ngữ khác (ví dụ tiếng Trung).
-     */
-    private fun create(
-        ctx: Context, locale: Locale, rate: Float, enginePkg: String?,
-        assign: (TextToSpeech) -> Unit, ready: (Boolean) -> Unit
-    ) {
-        var tts: TextToSpeech? = null
-        val listener = TextToSpeech.OnInitListener { status ->
-            val e = tts
-            val ok = status == TextToSpeech.SUCCESS && e != null && setup(e, locale, rate)
-            if (!ok && enginePkg != null) {
-                try { e?.shutdown() } catch (_: Exception) {}
-                create(ctx, locale, rate, null, assign, ready)
-            } else {
-                ready(ok)
-            }
-        }
-        tts = if (enginePkg != null) TextToSpeech(ctx, listener, enginePkg) else TextToSpeech(ctx, listener)
-        assign(tts)
-    }
-
-    private fun setup(e: TextToSpeech, locale: Locale, rate: Float): Boolean {
-        val r = e.setLanguage(locale)
-        if (r == TextToSpeech.LANG_MISSING_DATA || r == TextToSpeech.LANG_NOT_SUPPORTED) return false
-        try {
-            val v = e.voices?.firstOrNull {
-                it.locale.language == locale.language && !it.features.contains("notInstalled")
-            }
-            if (v != null) e.voice = v
-        } catch (_: Exception) {}
-        val cur = e.voice?.locale?.language
-        if (cur != null && cur != locale.language) return false
-        e.setSpeechRate(rate)
-        return true
+        vi.start()
+        en.start()
     }
 
     private class Seg(val text: String, val english: Boolean)
@@ -105,7 +143,8 @@ class Speaker(context: Context) {
             return
         }
         val seg = segs[i]
-        val engine = if (seg.english) (if (enOk) en else null) else (if (viOk) vi else null)
+        val lane = if (seg.english) en else vi
+        val engine = if (lane.ready) lane.tts else null
         if (engine == null) {
             next(segs, i + 1, t)
             return
@@ -126,15 +165,15 @@ class Speaker(context: Context) {
 
     fun stop() {
         token++
-        vi?.stop()
-        en?.stop()
+        vi.stop()
+        en.stop()
         speaking = false
     }
 
     fun shutdown() {
         token++
-        vi?.stop(); vi?.shutdown(); vi = null
-        en?.stop(); en?.shutdown(); en = null
+        vi.shutdown()
+        en.shutdown()
     }
 
     private fun hasVietnamese(s: String): Boolean = VI_CHARS.containsMatchIn(s.lowercase())
