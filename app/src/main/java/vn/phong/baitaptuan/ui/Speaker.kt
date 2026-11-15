@@ -29,23 +29,50 @@ class Speaker(context: Context) {
         private set
 
     init {
-        vi = TextToSpeech(context.applicationContext) { status ->
-            val engine = vi
-            if (status == TextToSpeech.SUCCESS && engine != null) {
-                val r = engine.setLanguage(Locale("vi", "VN"))
-                viOk = r != TextToSpeech.LANG_MISSING_DATA && r != TextToSpeech.LANG_NOT_SUPPORTED
-                engine.setSpeechRate(0.9f)
-            }
-            viMissing = !viOk
+        create(context.applicationContext, Locale("vi", "VN"), 0.9f, GOOGLE, { vi = it }) { ok ->
+            viOk = ok
+            viMissing = !ok
         }
-        en = TextToSpeech(context.applicationContext) { status ->
-            val engine = en
-            if (status == TextToSpeech.SUCCESS && engine != null) {
-                val r = engine.setLanguage(Locale.US)
-                enOk = r != TextToSpeech.LANG_MISSING_DATA && r != TextToSpeech.LANG_NOT_SUPPORTED
-                engine.setSpeechRate(0.85f)
+        create(context.applicationContext, Locale.US, 0.85f, GOOGLE, { en = it }) { ok -> enOk = ok }
+    }
+
+    /**
+     * Ưu tiên bộ đọc của Google. Nếu không có hoặc không có đúng giọng của ngôn ngữ cần đọc
+     * thì thử bộ đọc mặc định; vẫn không đúng ngôn ngữ thì coi như chưa có giọng,
+     * tránh việc máy đọc nhầm bằng giọng ngôn ngữ khác (ví dụ tiếng Trung).
+     */
+    private fun create(
+        ctx: Context, locale: Locale, rate: Float, enginePkg: String?,
+        assign: (TextToSpeech) -> Unit, ready: (Boolean) -> Unit
+    ) {
+        var tts: TextToSpeech? = null
+        val listener = TextToSpeech.OnInitListener { status ->
+            val e = tts
+            val ok = status == TextToSpeech.SUCCESS && e != null && setup(e, locale, rate)
+            if (!ok && enginePkg != null) {
+                try { e?.shutdown() } catch (_: Exception) {}
+                create(ctx, locale, rate, null, assign, ready)
+            } else {
+                ready(ok)
             }
         }
+        tts = if (enginePkg != null) TextToSpeech(ctx, listener, enginePkg) else TextToSpeech(ctx, listener)
+        assign(tts)
+    }
+
+    private fun setup(e: TextToSpeech, locale: Locale, rate: Float): Boolean {
+        val r = e.setLanguage(locale)
+        if (r == TextToSpeech.LANG_MISSING_DATA || r == TextToSpeech.LANG_NOT_SUPPORTED) return false
+        try {
+            val v = e.voices?.firstOrNull {
+                it.locale.language == locale.language && !it.features.contains("notInstalled")
+            }
+            if (v != null) e.voice = v
+        } catch (_: Exception) {}
+        val cur = e.voice?.locale?.language
+        if (cur != null && cur != locale.language) return false
+        e.setSpeechRate(rate)
+        return true
     }
 
     private class Seg(val text: String, val english: Boolean)
@@ -132,6 +159,7 @@ class Speaker(context: Context) {
     }
 
     private companion object {
+        const val GOOGLE = "com.google.android.tts"
         val VI_CHARS = Regex("[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]")
     }
 }
