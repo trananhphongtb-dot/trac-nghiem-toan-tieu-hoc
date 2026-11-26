@@ -4,11 +4,9 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-
 android {
     namespace = "vn.phong.baitaptuan"
     compileSdk = 36
-
 
     defaultConfig {
         applicationId = "vn.phong.baitaptuan"
@@ -17,7 +15,6 @@ android {
         versionCode = 2
         versionName = "1.0.1"
     }
-
 
     buildFeatures {
         compose = true
@@ -31,7 +28,6 @@ android {
     }
 }
 
-
 dependencies {
     implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.activity:activity-compose:1.10.1")
@@ -41,4 +37,3 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
 }
-
