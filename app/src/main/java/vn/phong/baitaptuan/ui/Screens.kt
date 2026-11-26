@@ -164,11 +164,10 @@ fun HomeScreen(
                 ) { Text("📝", fontSize = 30.sp) }
                 Spacer(modifier = Modifier.width(14.dp))
                 Column {
-                    Text("Bài Tập Tuần", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+                    Text("Bài Tập Tuần Tiểu Học", fontSize = 26.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
                     Text("Tiểu học • Lớp 1–5 • 35 tuần", fontSize = 15.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
-            SectionTitle("Chọn môn học")
             Subject.values().forEach { subject ->
                 AppCard(modifier = Modifier.fillMaxWidth(), onClick = { onSubjectSelected(subject) }) {
                     Row(
@@ -203,7 +202,7 @@ fun GradeScreen(
 ) {
     AppBox {
         Column(modifier = Modifier.fillMaxSize()) {
-            TopBar(subject.title, "Chọn lớp", onBack)
+            TopBar(subject.title, onBack)
             Column(
                 modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -250,12 +249,6 @@ fun WeekScreen(
                 modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 4.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(
-                    if (subject == Subject.TOAN) "Khung tuần theo bộ Kết nối tri thức. Tuần ghi “ước tính” có thể lệch 1 tuần theo trường."
-                    else "Chủ đề theo mạch kiến thức của chương trình. Mỗi lần làm ra bộ câu hỏi khác nhau.",
-                    fontSize = 13.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
                 SectionTitle("Học kỳ 1 • Tuần 1–18")
                 WeekGrid(subject, grade, 1..18, best, accent, onWeek)
                 SectionTitle("Học kỳ 2 • Tuần 19–35")
