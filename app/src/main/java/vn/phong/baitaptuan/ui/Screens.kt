@@ -202,7 +202,7 @@ fun GradeScreen(
 ) {
     AppBox {
         Column(modifier = Modifier.fillMaxSize()) {
-            TopBar(subject.title, onBack)
+            TopBar(subject.title, onBack = onBack)
             Column(
                 modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
