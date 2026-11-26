@@ -61,7 +61,7 @@ Chi tiết ở `app/src/main/java/vn/phong/baitaptuan/data/WeekTopics.kt`:
 - `data/WeekTopics.kt`, `WeeklyGenerators*.kt`: Toán.
 - `data/SubjectBank.kt`: bộ máy sinh đề cho môn ngoài Toán (câu cố định, cặp từ, nhóm từ).
 - `data/TiengVietBank.kt`, `TiengAnhBank.kt`, `TuNhienBank.kt`, `LichSuDiaLiBank.kt`: nội dung từng môn.
-Thêm câu mới: dòng dạng `câu hỏi | đáp án đúng | sai 1 | sai 2 | sai 3 || lời giải`.
+  Thêm câu mới: dòng dạng `câu hỏi | đáp án đúng | sai 1 | sai 2 | sai 3 || lời giải`.
 - `data/HistoryStore.kt`: lịch sử làm bài (SharedPreferences, tối đa 50 lượt, có lưu môn học).
 - `ui/Screens.kt`, `MainActivity.kt`: giao diện Compose.
 
@@ -69,5 +69,5 @@ Thêm câu mới: dòng dạng `câu hỏi | đáp án đúng | sai 1 | sai 2 | 
 
 Đẩy code lên GitHub, workflow chạy `gradle assembleDebug` và tải artifact `BaiTapTuan-debug` về cài thử.
 Phần dữ liệu và sinh đề (không dùng Android) đã được biên dịch và chạy thử riêng bằng trình biên dịch
-Kotlin để kiểm tra mọi môn, lớp, tuần cho đủ 40 câu và không có câu lỗi; phần giao diện Android chỉ
+Kotlin để kiểm tra mọi môn, lớp, tuần cho đủ 40 câu và không có câu lỗi; phần giao diện Android chỉ được
 kiểm chứng khi build trên GitHub Actions.
